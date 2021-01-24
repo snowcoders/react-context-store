@@ -1,0 +1,12 @@
+.circleci/**
+.nyc_output/**
+.vscode/**
+.gitignore
+.npmignore
+.vscode/**
+coverage/**
+src/**
+tsconfig.json
+*rc.js
+jest.config.js
+webpack.config.js
