@@ -7,8 +7,8 @@ configure({
   adapter: new Adapter(),
 });
 
-describe("Context store - object", () => {
-  it("completely rewrites all data with replace all", async () => {
+describe("replaceAll", () => {
+  it("completely rewrites all data", async () => {
     // Setup
     const data1: Array<Item> = [
       {
@@ -54,7 +54,9 @@ describe("Context store - object", () => {
     result = harness.getContextData();
     expect(result.data.length).toBe(3);
   });
+});
 
+describe("updateOne", () => {
   it("only updates one value with updateOne", async () => {
     // Setup
     const originalData: Array<Item> = [
@@ -92,8 +94,10 @@ describe("Context store - object", () => {
     expect(result.data[1]).not.toBe(originalData[1]);
     expect(result.data[2]).toBe(originalData[2]);
   });
+});
 
-  it("creates a new entry with createOne", async () => {
+describe("createOne", () => {
+  it("creates a new entry", async () => {
     // Setup
     const originalData: Array<Item> = [
       {
@@ -135,7 +139,51 @@ describe("Context store - object", () => {
     });
   });
 
-  it("deletes an entry with deleteOne", async () => {
+  it("creates a duplicate entry", async () => {
+    // Setup
+    const originalData: Array<Item> = [
+      {
+        id: 1,
+        name: "Name 1",
+      },
+      {
+        id: 2,
+        name: "Name 2",
+      },
+      {
+        id: 3,
+        name: "Name 3",
+      },
+    ];
+    const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
+    let result = harness.getContextData();
+    await result.replaceAll(originalData);
+    await harness.waitForAsyncTasks();
+    result = harness.getContextData();
+    expect(result.data.length).toBe(3);
+
+    // Work
+    await result.createOne({
+      id: 0,
+      name: "New name",
+    });
+    await harness.waitForAsyncTasks();
+
+    // Verify
+    result = harness.getContextData();
+    expect(result.data.length).toBe(4);
+    expect(result.data[0]).toBe(originalData[0]);
+    expect(result.data[1]).toBe(originalData[1]);
+    expect(result.data[2]).toBe(originalData[2]);
+    expect(result.data[3]).toEqual({
+      id: 0,
+      name: "New name",
+    });
+  });
+});
+
+describe("deleteOne", () => {
+  it("deletes an existing value", async () => {
     // Setup
     const originalData: Array<Item> = [
       {
@@ -171,7 +219,7 @@ describe("Context store - object", () => {
     expect(result.data[1]).toBe(originalData[2]);
   });
 
-  it("deletes a non-existant entry with deleteOne", async () => {
+  it("throws reject when deleting non-existant value", async () => {
     // Setup
     const originalData: Array<Item> = [
       {

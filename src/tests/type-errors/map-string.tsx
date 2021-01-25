@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useEffect, useState } from "react";
+import React, { PropsWithChildren, useState } from "react";
 
 import {
   ContextStore,
@@ -9,27 +9,26 @@ import {
   useUpdateOneContextData,
 } from "../../index";
 
+export type ContextValueData = Record<string, Item>;
 export type Item = {
-  id: number;
+  id: keyof ContextValueData;
   name: string;
 };
 
-type contextStoreDataArray = Array<Item>;
-
-export type ReplaceAllParams = contextStoreDataArray;
-export type UpdateOneParams = Partial<Item> & Pick<Item, "id">;
+export type ReplaceAllParams = ContextValueData;
 export type CreateOneParams = Item;
+export type UpdateOneParams = Partial<Item> & Pick<Item, "id">;
 export type DeleteOneParams = Pick<Item, "id">;
-export interface ContextValue extends ContextStore<contextStoreDataArray> {
+export interface ContextValue extends ContextStore<ContextValueData> {
   createOne: (params: CreateOneParams) => Promise<Item>;
   deleteOne: (params: DeleteOneParams) => Promise<Item>;
-  replaceAll: (params: ReplaceAllParams) => Promise<contextStoreDataArray>;
+  replaceAll: (params: ReplaceAllParams) => Promise<ContextValueData>;
   updateOne: (params: UpdateOneParams) => Promise<Item>;
 }
 
 const defaultValue: ContextValue = {
   createOne: getNotImplementedPromise,
-  data: [],
+  data: {},
   deleteOne: getNotImplementedPromise,
   replaceAll: getNotImplementedPromise,
   state: "unsent",
@@ -45,32 +44,37 @@ export function ApiProvider(props: ProviderProps) {
 
   const replaceAll = useUpdateAllContextData(contextValue, setContextValue, {
     action: (params: ReplaceAllParams) => {
-      const newValue = [...params];
+      const newValue = { ...params };
       return Promise.resolve(newValue);
     },
   });
 
   const createOne = useCreateOneContextData(contextValue, setContextValue, {
+    // TODO @ts-expect-error - "doesNotExist" isn't part of Item
     action: (params: CreateOneParams) => {
       return Promise.resolve({
         ...params,
+        // TODO - "doesNotExist" isn't part of Item
+        doesNotExist: "asdfasdf",
       });
     },
+    // @ts-expect-error - key is a string not a number
     getIndex: (params: CreateOneParams) => {
-      return contextValue.data.length;
+      return 123;
     },
   });
 
   const updateOne = useUpdateOneContextData(contextValue, setContextValue, {
-    action: async (params: UpdateOneParams) => {
-      return {
+    // TODO @ts-expect-error - "doesNotExist" isn't part of Item
+    action: (params: UpdateOneParams) => {
+      return Promise.resolve({
         ...params,
-      };
-    },
-    getIndex: (params: UpdateOneParams) => {
-      return contextValue.data.findIndex((item) => {
-        return item.id === params.id;
+        doesNotExist: "asdfasdf",
       });
+    },
+    // @ts-expect-error - key is a string not a number
+    getIndex: (params: UpdateOneParams) => {
+      return 123;
     },
   });
 
@@ -79,9 +83,7 @@ export function ApiProvider(props: ProviderProps) {
       return Promise.resolve(null);
     },
     getIndex: (params: DeleteOneParams) => {
-      return contextValue.data.findIndex((item) => {
-        return item.id === params.id;
-      });
+      return params.id;
     },
   });
 

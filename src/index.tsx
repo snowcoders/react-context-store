@@ -1,29 +1,40 @@
 import { useCallback } from "react";
 
+const statefulStates = {
+  error: "error",
+  loading: "loading",
+  success: "success",
+  unsent: "unsent",
+} as const;
 export interface Stateful {
-  state: "error" | "loading" | "success" | "unsent";
+  state: keyof typeof statefulStates;
 }
 
-export interface ContextStore<T> extends Stateful {
-  data: T;
+export interface ContextStore<TIndexableDataItem> extends Stateful {
+  data: TIndexableDataItem;
 }
+
+// Helper type for when data is an indexable type (map or array)
+type ContextStoreIndexableData<TIndexableDataItem> =
+  | { [key: number]: TIndexableDataItem }
+  | { [key: string]: TIndexableDataItem };
 
 export const getNotImplementedPromise = () => Promise.reject("Not Implemented");
 
 export function useUpdateAllContextData<
   Params,
-  TData,
-  T extends ContextStore<TData>
+  TIndexableDataItem,
+  TContextStore extends ContextStore<TIndexableDataItem>
 >(
-  contextData: T,
-  setContextData: React.Dispatch<React.SetStateAction<T>>,
+  contextData: TContextStore,
+  setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   dataHandlers: {
-    action?: (params: Params) => Promise<TData>;
-    error?: (params: Params) => Promise<TData>;
-    preaction?: (params: Params) => Promise<TData>;
+    action?: (params: Params) => Promise<TIndexableDataItem>;
+    error?: (params: Params) => Promise<TIndexableDataItem>;
+    preaction?: (params: Params) => Promise<TIndexableDataItem>;
   },
   deps: React.DependencyList = []
-): (params: Params) => Promise<TData> {
+): (params: Params) => Promise<TIndexableDataItem> {
   return useCallback(
     async (params: Params) => {
       const { action, error, preaction } = dataHandlers;
@@ -34,7 +45,7 @@ export function useUpdateAllContextData<
         setContextData({
           ...contextData,
           data: value,
-          state: "loading",
+          state: statefulStates.loading,
         });
 
         // Handle action
@@ -42,7 +53,7 @@ export function useUpdateAllContextData<
         setContextData({
           ...contextData,
           data: value,
-          state: "success",
+          state: statefulStates.success,
         });
         return Promise.resolve(value);
       } catch (e) {
@@ -53,7 +64,7 @@ export function useUpdateAllContextData<
           setContextData({
             ...contextData,
             data: errorValue,
-            state: "error",
+            state: statefulStates.error,
           });
           return Promise.resolve(errorValue);
         }
@@ -65,24 +76,24 @@ export function useUpdateAllContextData<
 
 export function useCreateOneContextData<
   Params,
-  TData,
-  T extends ContextStore<TMap>,
-  TMap = { [key: number]: TData } | { [key: string]: TData }
+  TContextStore extends ContextStore<TIndexableData>,
+  TIndexableData = TContextStore["data"],
+  TIndexableDataItem = TContextStore["data"][any]
 >(
-  contextData: T,
-  setContextData: React.Dispatch<React.SetStateAction<T>>,
+  contextData: TContextStore,
+  setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   dataHandlers: {
-    action: (params: Params) => Promise<TData>;
-    error?: (params: Params) => Promise<TData>;
-    getIndex: (params: Params) => keyof TMap;
-    preaction?: (params: Params) => Promise<TData>;
+    action: (params: Params) => Promise<TIndexableDataItem>;
+    error?: (params: Params) => Promise<TIndexableDataItem | null>;
+    getIndex: (params: Params) => keyof TContextStore["data"];
+    preaction?: (params: Params) => Promise<TIndexableDataItem>;
   },
   deps: React.DependencyList = []
-): (params: Params) => Promise<TData> {
+): (params: Params) => Promise<TIndexableDataItem> {
   return useCallback(
     async (params: Params) => {
       const { action, error, getIndex, preaction } = dataHandlers;
-      let value: null | TData = null;
+      let value: null | TIndexableDataItem = null;
 
       try {
         // Handle preaction
@@ -92,7 +103,7 @@ export function useCreateOneContextData<
             setContextData,
             params,
             getIndex,
-            "loading",
+            statefulStates.loading,
             preaction
           )) ?? value;
 
@@ -103,12 +114,12 @@ export function useCreateOneContextData<
             setContextData,
             params,
             getIndex,
-            "success",
+            statefulStates.success,
             action
           )) ?? value;
 
         if (value == null) {
-          return Promise.reject("action response was nullish");
+          return Promise.reject("action did not create value");
         } else {
           return Promise.resolve(value);
         }
@@ -119,22 +130,20 @@ export function useCreateOneContextData<
             setContextData,
             params,
             getIndex,
-            "error",
+            statefulStates.error,
             error
           );
           if (value == null) {
-            return Promise.reject("error response was nullish");
+            return Promise.reject("index not found");
           } else {
             return Promise.resolve(value);
           }
-        } finally {
+        } catch {
           setContextData({
             ...contextData,
-            state: "error",
+            state: statefulStates.error,
           });
-          return Promise.reject(
-            "useUpdateOneContextData error callback should never reject"
-          );
+          return Promise.reject("error callback should never reject");
         }
       }
     },
@@ -144,16 +153,16 @@ export function useCreateOneContextData<
 
 async function setContextDataForCreateOne<
   Params,
-  TData,
-  T extends ContextStore<TMap>,
-  TMap = { [key: number]: TData } | { [key: string]: TData }
+  TContextStore extends ContextStore<TIndexableData>,
+  TIndexableData = TContextStore["data"],
+  TIndexableDataItem = TContextStore["data"][any]
 >(
-  contextData: T,
-  setContextData: React.Dispatch<React.SetStateAction<T>>,
+  contextData: TContextStore,
+  setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
-  getIndex: (params: Params) => keyof TMap,
+  getIndex: (params: Params) => keyof TIndexableData,
   state: Stateful["state"],
-  action?: (params: Params) => Promise<TData>
+  action?: (params: Params) => Promise<TIndexableDataItem>
 ) {
   // Handle preaction scenario
   const index = getIndex(params);
@@ -167,14 +176,19 @@ async function setContextDataForCreateOne<
 }
 
 function getUpdatedContextDataForCreateOne<
-  TData,
-  TMap = { [key: number]: TData } | { [key: string]: TData }
->(data: TMap, index: keyof TMap, value: null | TData): TMap {
+  TContextStore extends ContextStore<TIndexableData>,
+  TIndexableData = TContextStore["data"],
+  TIndexableDataItem = TContextStore["data"][any]
+>(
+  data: TIndexableData,
+  index: keyof TIndexableData,
+  value: null | TIndexableDataItem
+): TIndexableData {
   if (value == null) {
     return data;
   }
   // Handle array updates
-  if (Array.isArray(data) && typeof index === "number") {
+  if (Array.isArray(data)) {
     const newData = [...data];
     // @ts-ignore
     newData.splice(index, 1, value);
@@ -190,24 +204,25 @@ function getUpdatedContextDataForCreateOne<
 }
 export function useUpdateOneContextData<
   Params,
-  TData,
-  T extends ContextStore<TMap>,
-  TMap = { [key: number]: TData } | { [key: string]: TData }
+  TContextStore extends ContextStore<TIndexableData>,
+  TIndexableData = TContextStore["data"],
+  TIndexableDataItem = TContextStore["data"][any],
+  TUpdateDataItem = Partial<TIndexableDataItem>
 >(
-  contextData: T,
-  setContextData: React.Dispatch<React.SetStateAction<T>>,
+  contextData: TContextStore,
+  setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   dataHandlers: {
-    action: (params: Params) => Promise<Partial<TData>>;
-    error?: (params: Params) => Promise<Partial<TData>>;
-    getIndex: (params: Params) => keyof TMap;
-    preaction?: (params: Params) => Promise<Partial<TData>>;
+    action: (params: Params) => Promise<TUpdateDataItem>;
+    error?: (params: Params) => Promise<Partial<TIndexableDataItem>>;
+    getIndex: (params: Params) => keyof TIndexableData;
+    preaction?: (params: Params) => Promise<Partial<TIndexableDataItem>>;
   },
   deps: React.DependencyList = []
-): (params: Params) => Promise<TData> {
+): (params: Params) => Promise<TIndexableDataItem> {
   return useCallback(
     async (params: Params) => {
       const { action, error, getIndex, preaction } = dataHandlers;
-      let value: null | TData = null;
+      let value: null | TIndexableDataItem = null;
 
       try {
         // Handle preaction
@@ -217,7 +232,7 @@ export function useUpdateOneContextData<
             setContextData,
             params,
             getIndex,
-            "loading",
+            statefulStates.loading,
             preaction
           )) ?? value;
 
@@ -228,12 +243,12 @@ export function useUpdateOneContextData<
             setContextData,
             params,
             getIndex,
-            "success",
+            statefulStates.success,
             action
           )) ?? value;
 
         if (value == null) {
-          return Promise.reject("action response was nullish");
+          return Promise.reject("index not found");
         } else {
           return Promise.resolve(value);
         }
@@ -244,22 +259,20 @@ export function useUpdateOneContextData<
             setContextData,
             params,
             getIndex,
-            "error",
+            statefulStates.error,
             error
           );
           if (value == null) {
-            return Promise.reject("error response was nullish");
+            return Promise.reject("index not found");
           } else {
             return Promise.resolve(value);
           }
-        } finally {
+        } catch {
           setContextData({
             ...contextData,
-            state: "error",
+            state: statefulStates.error,
           });
-          return Promise.reject(
-            "useUpdateOneContextData error callback should never reject"
-          );
+          return Promise.reject("error callback should never reject");
         }
       }
     },
@@ -269,17 +282,18 @@ export function useUpdateOneContextData<
 
 async function setContextDataForUpdateOne<
   Params,
-  TData,
-  T extends ContextStore<TMap>,
-  TMap = { [key: number]: TData } | { [key: string]: TData }
+  TContextStore extends ContextStore<TIndexableData>,
+  TIndexableData = TContextStore["data"],
+  TIndexableDataItem = TContextStore["data"][any],
+  TUpdateDataItem = Partial<TIndexableDataItem>
 >(
-  contextData: T,
-  setContextData: React.Dispatch<React.SetStateAction<T>>,
+  contextData: TContextStore,
+  setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
-  getIndex: (params: Params) => keyof TMap,
+  getIndex: (params: Params) => keyof TIndexableData,
   state: Stateful["state"],
-  action?: (params: Params) => Promise<Partial<TData>>
-): Promise<TData> {
+  action?: (params: Params) => Promise<TUpdateDataItem>
+): Promise<TIndexableDataItem> {
   // Handle preaction scenario
   const index = getIndex(params);
   const value = action ? await action(params) : null;
@@ -293,28 +307,39 @@ async function setContextDataForUpdateOne<
     data: newData,
     state: state,
   });
-  // @ts-expect-error - Our internal typing isn't fantastic
+  // @ts-ignore Our internal types don't seem to be fantastic
   return newData[index];
 }
 
 function getUpdatedContextDataForUpdateOne<
-  TData,
-  TMap = { [key: number]: TData } | { [key: string]: TData }
->(data: TMap, index: keyof TMap, value: null | TData): TMap {
-  if (value == null) {
+  TIndexableDataItem,
+  TIndexableData = ContextStoreIndexableData<TIndexableDataItem>
+>(
+  data: TIndexableData,
+  index: keyof TIndexableData,
+  partialUpdates: null | Partial<TIndexableDataItem>
+): TIndexableData {
+  if (partialUpdates == null) {
     return data;
   }
   // Handle array updates
-  if (Array.isArray(data) && typeof index === "number") {
-    const newData = [...data];
-    // @ts-ignore
-    newData.splice(index, 1, value);
-    // @ts-ignore
+  if (Array.isArray(data)) {
+    // @ts-ignore - Use as Any so we don't have to ts-ignore the rest of the lines
+    const newData = [...data] as any;
+    const oldValue = data[index];
+    if (oldValue == null) {
+      throw new Error("index not found");
+    }
+    newData.splice(index, 1, { ...oldValue, partialUpdates });
     return newData;
   } else {
+    const oldValue = data[index];
+    if (oldValue == null) {
+      throw new Error("index not found");
+    }
     const newData = {
       ...data,
-      [index]: value,
+      [index]: { ...oldValue, partialUpdates },
     };
     return newData;
   }
@@ -322,24 +347,24 @@ function getUpdatedContextDataForUpdateOne<
 
 export function useDeleteOneContextData<
   Params,
-  T extends ContextStore<TMap>,
-  TData = T["data"][any],
-  TMap = { [key: number]: TData } | { [key: string]: TData }
+  TContextStore extends ContextStore<TIndexableData>,
+  TIndexableData = TContextStore["data"],
+  TIndexableDataItem = TContextStore["data"][any]
 >(
-  contextData: T,
-  setContextData: React.Dispatch<React.SetStateAction<T>>,
+  contextData: TContextStore,
+  setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   dataHandlers: {
     action: (params: Params) => Promise<null>;
-    error?: (params: Params) => Promise<Partial<TData>>;
-    getIndex: (params: Params) => keyof TMap;
-    preaction?: (params: Params) => Promise<Partial<TData>>;
+    error?: (params: Params) => Promise<Partial<TIndexableDataItem>>;
+    getIndex: (params: Params) => keyof TIndexableData;
+    preaction?: (params: Params) => Promise<Partial<TIndexableDataItem>>;
   },
   deps: React.DependencyList = []
-): (params: Params) => Promise<TData> {
+): (params: Params) => Promise<TIndexableDataItem> {
   return useCallback(
     async (params: Params) => {
       const { action, error, getIndex, preaction } = dataHandlers;
-      let value: null | TData = null;
+      let value: null | TIndexableDataItem = null;
 
       try {
         // Handle preaction
@@ -349,7 +374,7 @@ export function useDeleteOneContextData<
             setContextData,
             params,
             getIndex,
-            "loading",
+            statefulStates.loading,
             preaction
           )) ?? value;
 
@@ -360,12 +385,12 @@ export function useDeleteOneContextData<
             setContextData,
             params,
             getIndex,
-            "success",
+            statefulStates.success,
             action
           )) ?? value;
 
         if (value == null) {
-          return Promise.reject("action response was nullish");
+          return Promise.reject("index not found");
         } else {
           return Promise.resolve(value);
         }
@@ -376,22 +401,20 @@ export function useDeleteOneContextData<
             setContextData,
             params,
             getIndex,
-            "error",
+            statefulStates.error,
             error
           );
           if (value == null) {
-            return Promise.reject("error response was nullish");
+            return Promise.reject("index not found");
           } else {
             return Promise.resolve(value);
           }
-        } finally {
+        } catch {
           setContextData({
             ...contextData,
-            state: "error",
+            state: statefulStates.error,
           });
-          return Promise.reject(
-            "useDeleteOneContextData error callback should never reject"
-          );
+          return Promise.reject("error callback should never reject");
         }
       }
     },
@@ -401,17 +424,17 @@ export function useDeleteOneContextData<
 
 async function setContextDataForDeleteOne<
   Params,
-  TData,
-  T extends ContextStore<TMap>,
-  TMap = { [key: number]: TData } | { [key: string]: TData }
+  TContextStore extends ContextStore<TIndexableData>,
+  TIndexableData = TContextStore["data"],
+  TIndexableDataItem = TContextStore["data"][any]
 >(
-  contextData: T,
-  setContextData: React.Dispatch<React.SetStateAction<T>>,
+  contextData: TContextStore,
+  setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
-  getIndex: (params: Params) => keyof TMap,
+  getIndex: (params: Params) => keyof TIndexableData,
   state: Stateful["state"],
-  action?: (params: Params) => Promise<Partial<TData>>
-): Promise<TData> {
+  action?: (params: Params) => Promise<Partial<TIndexableDataItem>>
+): Promise<TIndexableDataItem> {
   // Handle preaction scenario
   const index = getIndex(params);
   if (action) {
@@ -428,17 +451,27 @@ async function setContextDataForDeleteOne<
 }
 
 function getDeletedContextDataForDeleteOne<
-  TData,
-  TMap = { [key: number]: TData } | { [key: string]: TData }
->(data: TMap, index: keyof TMap): TMap {
+  TIndexableDataItem,
+  TIndexableData = ContextStoreIndexableData<TIndexableDataItem>
+>(data: TIndexableData, index: keyof TIndexableData): TIndexableData {
   // Handle array updates
-  if (Array.isArray(data) && typeof index === "number") {
+  if (Array.isArray(data)) {
+    const oldValue = data[index];
+    if (oldValue == null) {
+      throw new Error("index not found");
+    }
+
     const newData = [...data];
     // @ts-ignore
     newData.splice(index, 1);
     // @ts-ignore
     return newData;
   } else {
+    const oldValue = data[index];
+    if (oldValue == null) {
+      throw new Error("index not found");
+    }
+
     const newData = {
       ...data,
     };

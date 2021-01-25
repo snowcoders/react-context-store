@@ -1,29 +1,37 @@
-import React, { PropsWithChildren, useEffect, useState } from "react";
+import React, { PropsWithChildren, useState } from "react";
 
 import {
   ContextStore,
   getNotImplementedPromise,
+  useCreateOneContextData,
+  useDeleteOneContextData,
   useUpdateAllContextData,
   useUpdateOneContextData,
 } from "../../index";
 
+export type ContextValueData = Record<string, Item>;
 export type Item = {
-  id: number;
+  id: keyof ContextValueData;
   name: string;
 };
 
-export type ContextValueData = { [id: string]: Item };
-
 export type ReplaceAllParams = ContextValueData;
+export type CreateOneParams = Item;
 export type UpdateOneParams = Partial<Item> & Pick<Item, "id">;
+export type DeleteOneParams = Pick<Item, "id">;
 export interface ContextValue extends ContextStore<ContextValueData> {
+  rejectId: Item["id"];
+  createOne: (params: CreateOneParams) => Promise<Item>;
+  deleteOne: (params: DeleteOneParams) => Promise<Item>;
   replaceAll: (params: ReplaceAllParams) => Promise<ContextValueData>;
   updateOne: (params: UpdateOneParams) => Promise<Item>;
-  // TODO: add delete and create
 }
 
 const defaultValue: ContextValue = {
+  createOne: getNotImplementedPromise,
   data: {},
+  deleteOne: getNotImplementedPromise,
+  rejectId: "187",
   replaceAll: getNotImplementedPromise,
   state: "unsent",
   updateOne: getNotImplementedPromise,
@@ -43,8 +51,25 @@ export function ApiProvider(props: ProviderProps) {
     },
   });
 
+  const createOne = useCreateOneContextData(contextValue, setContextValue, {
+    action: (params: CreateOneParams) => {
+      if (params.id === contextValue.rejectId) {
+        return Promise.reject("Force reject due to id");
+      }
+      return Promise.resolve({
+        ...params,
+      });
+    },
+    getIndex: (params: CreateOneParams) => {
+      return params.id;
+    },
+  });
+
   const updateOne = useUpdateOneContextData(contextValue, setContextValue, {
     action: (params: UpdateOneParams) => {
+      if (params.id === contextValue.rejectId) {
+        return Promise.reject("Force reject due to id");
+      }
       return Promise.resolve({
         ...params,
       });
@@ -54,8 +79,22 @@ export function ApiProvider(props: ProviderProps) {
     },
   });
 
+  const deleteOne = useDeleteOneContextData(contextValue, setContextValue, {
+    action: (params: DeleteOneParams) => {
+      if (params.id === contextValue.rejectId) {
+        return Promise.reject("Force reject due to id");
+      }
+      return Promise.resolve(null);
+    },
+    getIndex: (params: DeleteOneParams) => {
+      return params.id;
+    },
+  });
+
   return (
-    <Context.Provider value={{ ...contextValue, replaceAll, updateOne }}>
+    <Context.Provider
+      value={{ ...contextValue, replaceAll, updateOne, createOne, deleteOne }}
+    >
       {children}
     </Context.Provider>
   );
