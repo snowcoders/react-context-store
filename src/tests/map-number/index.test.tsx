@@ -35,24 +35,21 @@ describe("Context store - object", () => {
     const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
 
     // Verify
-    let result = harness.getContextData();
-    expect(Object.keys(result.data).length).toBe(0);
+    expect(Object.keys(harness.getContextData().data).length).toBe(0);
 
     // Work
-    await result.replaceAll(data1);
+    await harness.getContextData().replaceAll(data1);
     await harness.waitForAsyncTasks();
 
     // Verify
-    result = harness.getContextData();
-    expect(Object.keys(result.data).length).toBe(1);
+    expect(Object.keys(harness.getContextData().data).length).toBe(1);
 
     // Work
-    await result.replaceAll(data2);
+    await harness.getContextData().replaceAll(data2);
     await harness.waitForAsyncTasks();
 
     // Verify
-    result = harness.getContextData();
-    expect(Object.keys(result.data).length).toBe(3);
+    expect(Object.keys(harness.getContextData().data).length).toBe(3);
   });
 
   it("only updates one value with updateOne", async () => {
@@ -72,24 +69,53 @@ describe("Context store - object", () => {
       },
     };
     const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
-    let result = harness.getContextData();
-    await result.replaceAll(originalData);
+    await harness.getContextData().replaceAll(originalData);
     await harness.waitForAsyncTasks();
-    result = harness.getContextData();
-    expect(Object.keys(result.data).length).toBe(3);
+    expect(Object.keys(harness.getContextData().data).length).toBe(3);
 
     // Work
-    await result.updateOne({
+    await harness.getContextData().updateOne({
       ...originalData[2],
       name: "New name",
     });
     await harness.waitForAsyncTasks();
 
     // Verify
-    result = harness.getContextData();
-    expect(Object.keys(result.data).length).toBe(3);
-    expect(result.data[1]).toBe(originalData[1]);
-    expect(result.data[2]).not.toBe(originalData[2]);
-    expect(result.data[3]).toBe(originalData[3]);
+    expect(Object.keys(harness.getContextData().data).length).toBe(3);
+    expect(harness.getContextData().data[1]).toBe(originalData[1]);
+    expect(harness.getContextData().data[2]).not.toBe(originalData[2]);
+    expect(harness.getContextData().data[3]).toBe(originalData[3]);
+  });
+
+  it("only updates one value with updateOne", async () => {
+    // Setup
+    const originalData: ContextValueData = {
+      1: {
+        id: 1,
+        name: "Name 1",
+      },
+      2: {
+        id: 2,
+        name: "Name 2",
+      },
+      3: {
+        id: 3,
+        name: "Name 3",
+      },
+    };
+    const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
+    await harness.getContextData().replaceAll(originalData);
+    await harness.waitForAsyncTasks();
+    await harness.getContextData().updateOne({
+      ...originalData[2],
+      name: "New name",
+    });
+    await harness.waitForAsyncTasks();
+
+    // Verify
+    expect(Object.keys(harness.getContextData().data).length).toBe(3);
+    expect(harness.getContextData().data[1]).toBe(originalData[1]);
+    expect(harness.getContextData().data[2]).not.toBe(originalData[2]);
+    expect(harness.getContextData().data[3]).toBe(originalData[3]);
   });
 });

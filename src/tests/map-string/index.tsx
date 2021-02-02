@@ -3,10 +3,7 @@ import React, { PropsWithChildren, useState } from "react";
 import {
   ContextStore,
   getNotImplementedPromise,
-  useCreateOneContextData,
-  useDeleteOneContextData,
-  useUpdateAllContextData,
-  useUpdateOneContextData,
+  useIndexableContextStore,
 } from "../../index";
 
 export type ContextValueData = Record<string, Item>;
@@ -42,16 +39,16 @@ export type ProviderProps = PropsWithChildren<{}>;
 
 export function ApiProvider(props: ProviderProps) {
   const { children } = props;
-  const [contextValue, setContextValue] = useState(defaultValue);
+  const [contextValue, modifiers] = useIndexableContextStore(defaultValue);
 
-  const replaceAll = useUpdateAllContextData(contextValue, setContextValue, {
+  const replaceAll = modifiers.useReplaceFactory({
     action: (params: ReplaceAllParams) => {
       const newValue = { ...params };
       return Promise.resolve(newValue);
     },
   });
 
-  const createOne = useCreateOneContextData(contextValue, setContextValue, {
+  const createOne = modifiers.useCreateOneFactory({
     action: (params: CreateOneParams) => {
       if (params.id === contextValue.rejectId) {
         return Promise.reject("Force reject due to id");
@@ -65,7 +62,7 @@ export function ApiProvider(props: ProviderProps) {
     },
   });
 
-  const updateOne = useUpdateOneContextData(contextValue, setContextValue, {
+  const updateOne = modifiers.useUpdateOneFactory({
     action: (params: UpdateOneParams) => {
       if (params.id === contextValue.rejectId) {
         return Promise.reject("Force reject due to id");
@@ -79,7 +76,7 @@ export function ApiProvider(props: ProviderProps) {
     },
   });
 
-  const deleteOne = useDeleteOneContextData(contextValue, setContextValue, {
+  const deleteOne = modifiers.useDeleteOneFactory({
     action: (params: DeleteOneParams) => {
       if (params.id === contextValue.rejectId) {
         return Promise.reject("Force reject due to id");

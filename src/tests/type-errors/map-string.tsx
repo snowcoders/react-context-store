@@ -3,10 +3,7 @@ import React, { PropsWithChildren, useState } from "react";
 import {
   ContextStore,
   getNotImplementedPromise,
-  useCreateOneContextData,
-  useDeleteOneContextData,
-  useUpdateAllContextData,
-  useUpdateOneContextData,
+  useIndexableContextStore,
 } from "../../index";
 
 export type ContextValueData = Record<string, Item>;
@@ -40,16 +37,18 @@ export type ProviderProps = PropsWithChildren<{}>;
 
 export function ApiProvider(props: ProviderProps) {
   const { children } = props;
-  const [contextValue, setContextValue] = useState(defaultValue);
+  const [contextValue, setContextValue] = useIndexableContextStore(
+    defaultValue
+  );
 
-  const replaceAll = useUpdateAllContextData(contextValue, setContextValue, {
+  const replaceAll = setContextValue.useReplaceFactory({
     action: (params: ReplaceAllParams) => {
       const newValue = { ...params };
       return Promise.resolve(newValue);
     },
   });
 
-  const createOne = useCreateOneContextData(contextValue, setContextValue, {
+  const createOne = setContextValue.useCreateOneFactory({
     // TODO @ts-expect-error - "doesNotExist" isn't part of Item
     action: (params: CreateOneParams) => {
       return Promise.resolve({
@@ -64,7 +63,7 @@ export function ApiProvider(props: ProviderProps) {
     },
   });
 
-  const updateOne = useUpdateOneContextData(contextValue, setContextValue, {
+  const updateOne = setContextValue.useUpdateOneFactory({
     // TODO @ts-expect-error - "doesNotExist" isn't part of Item
     action: (params: UpdateOneParams) => {
       return Promise.resolve({
@@ -78,7 +77,7 @@ export function ApiProvider(props: ProviderProps) {
     },
   });
 
-  const deleteOne = useDeleteOneContextData(contextValue, setContextValue, {
+  const deleteOne = setContextValue.useDeleteOneFactory({
     action: (params: DeleteOneParams) => {
       return Promise.resolve(null);
     },

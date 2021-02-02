@@ -3,7 +3,7 @@ import React, { PropsWithChildren, useEffect, useState } from "react";
 import {
   ContextStore,
   getNotImplementedPromise,
-  useUpdateAllContextData,
+  useContextStore,
 } from "../../index";
 
 export type Item = {
@@ -30,9 +30,9 @@ export type ProviderProps = PropsWithChildren<{}>;
 
 export function ApiProvider(props: ProviderProps) {
   const { children } = props;
-  const [contextValue, setContextValue] = useState(defaultValue);
+  const [contextValue, setContextValue] = useContextStore(defaultValue);
 
-  const up = useUpdateAllContextData(contextValue, setContextValue, {
+  const up = setContextValue.useReplaceFactory({
     action: (params: ChangeNameParams) => {
       const { newName } = params;
       const newValue = { ...contextValue.data, name: newName };

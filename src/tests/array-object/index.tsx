@@ -1,12 +1,9 @@
-import React, { PropsWithChildren, useEffect, useState } from "react";
+import React, { PropsWithChildren } from "react";
 
 import {
   ContextStore,
   getNotImplementedPromise,
-  useCreateOneContextData,
-  useDeleteOneContextData,
-  useUpdateAllContextData,
-  useUpdateOneContextData,
+  useIndexableContextStore,
 } from "../../index";
 
 export type Item = {
@@ -41,16 +38,24 @@ export type ProviderProps = PropsWithChildren<{}>;
 
 export function ApiProvider(props: ProviderProps) {
   const { children } = props;
-  const [contextValue, setContextValue] = useState(defaultValue);
+  const [
+    contextValue,
+    {
+      useCreateOneFactory,
+      useDeleteOneFactory,
+      useReplaceFactory,
+      useUpdateOneFactory,
+    },
+  ] = useIndexableContextStore(defaultValue);
 
-  const replaceAll = useUpdateAllContextData(contextValue, setContextValue, {
+  const replaceAll = useReplaceFactory({
     action: (params: ReplaceAllParams) => {
       const newValue = [...params];
       return Promise.resolve(newValue);
     },
   });
 
-  const createOne = useCreateOneContextData(contextValue, setContextValue, {
+  const createOne = useCreateOneFactory({
     action: (params: CreateOneParams) => {
       return Promise.resolve({
         ...params,
@@ -61,7 +66,7 @@ export function ApiProvider(props: ProviderProps) {
     },
   });
 
-  const updateOne = useUpdateOneContextData(contextValue, setContextValue, {
+  const updateOne = useUpdateOneFactory({
     action: async (params: UpdateOneParams) => {
       return {
         ...params,
@@ -74,7 +79,7 @@ export function ApiProvider(props: ProviderProps) {
     },
   });
 
-  const deleteOne = useDeleteOneContextData(contextValue, setContextValue, {
+  const deleteOne = useDeleteOneFactory({
     action: (params: DeleteOneParams) => {
       return Promise.resolve(null);
     },

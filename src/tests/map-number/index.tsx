@@ -3,8 +3,7 @@ import React, { PropsWithChildren, useEffect, useState } from "react";
 import {
   ContextStore,
   getNotImplementedPromise,
-  useUpdateAllContextData,
-  useUpdateOneContextData,
+  useIndexableContextStore,
 } from "../../index";
 
 export type Item = {
@@ -34,16 +33,18 @@ export type ProviderProps = PropsWithChildren<{}>;
 
 export function ApiProvider(props: ProviderProps) {
   const { children } = props;
-  const [contextValue, setContextValue] = useState(defaultValue);
+  const [contextValue, setContextValue] = useIndexableContextStore(
+    defaultValue
+  );
 
-  const replaceAll = useUpdateAllContextData(contextValue, setContextValue, {
+  const replaceAll = setContextValue.useReplaceFactory({
     action: (params: ReplaceAllParams) => {
       const newValue = { ...params };
       return Promise.resolve(newValue);
     },
   });
 
-  const updateOne = useUpdateOneContextData(contextValue, setContextValue, {
+  const updateOne = setContextValue.useUpdateOneFactory({
     action: (params: UpdateOneParams) => {
       return Promise.resolve({
         ...params,
