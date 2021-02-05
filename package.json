@@ -30,6 +30,10 @@
   "peerDependencies": {
     "react": "^16.0.0 || ^17.0.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/snowcoders/react-context-store"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
