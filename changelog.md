@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Renamed `preaction` to `preload`
+- Defaulted Params to be void
+- Refactor and reorganization of code
+- Added `useStatefulIndexableContextStore`
+  - For any methods that update all items, the base `state` will be modified
+  - For any methods that update a single item, the individual item's `state` will be modified and the base state will be unchanged
+  - TODO: Need to add documentation for the above
+
 ## [1.0.0-beta.0] - 2021-02-05
 
 - First release

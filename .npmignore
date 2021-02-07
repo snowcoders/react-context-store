@@ -1,12 +1,6 @@
-.circleci
-.nyc_output
-.vscode
-.gitignore
-.npmignore
-.vscode
 coverage
-dist/tests
 src
+renovate.json
 tsconfig.json
 *rc.js
 jest.config.js
