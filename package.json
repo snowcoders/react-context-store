@@ -36,8 +36,9 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "build:prod": "tsc -p tsconfig.prod.json",
     "clean": "rimraf dist",
-    "prepare": "npm run clean && npm run build",
+    "prepare": "npm run clean && npm run build:prod",
     "test": "jest",
     "version": "changelog-updater && git add ."
   },

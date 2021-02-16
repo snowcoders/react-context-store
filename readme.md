@@ -45,14 +45,14 @@ export function ApiProvider(props: ApiProviderProps) {
   const [
     contextValue,
     {
-      useReplaceFactory,
+      useUpdateFactory,
       useUpdateOneFactory,
       useCreateOneFactory,
       useDeleteOneFactory,
     },
   ] = useIndexableContextStore(defaultValue);
 
-  const getAll = useReplaceFactory({
+  const getAll = useUpdateFactory({
     action: (params: GetAllParams) => {
       return await fetchList(params);
     },
@@ -123,10 +123,11 @@ There are two types of store hooks both of which return the current store conten
 
 - useContextStore - For non-indexable stores like objects and primatives
 - useIndexableContextStore - For indexable stores like maps or arrays
+- useStatefulIndexableContextStore - For indexable stores but when you want to maintain separate load states per item than the list of items
 
 Both come with the following modifiers:
 
-- useReplaceFactory - Used to modify all the values in the store at once. Useful for getAll, deleteAll, modifyAll, etc.
+- useUpdateFactory - Used to modify all the values in the store at once. Useful for getAll, deleteAll, modifyAll, etc.
 - setContextData - Used to create custom modifiers if for some reason you don't like ours.
 
 They also have the same states:
@@ -141,3 +142,5 @@ The `useIndexableContextStore` has an additional update methods that affect indi
 - useUpdateOneFactory - Used to create an updater which modifies an existing entry - PUT calls
 - useCreateOneFactory - Used to create a creator which creates a new entry - GET and POST calls.
 - useDeleteOneFactory - Used to create a deletor which removes an entry - DELETE call
+
+The `useStatefulIndexableContextStore` has the same methods as above however each item in the index will have a load state. When any of the `use___OneFactory` functions are used, the list's load state doesn't change however the individual item's load state does.
