@@ -1,7 +1,8 @@
+.*
 coverage
 src
 renovate.json
 tsconfig.json
-*rc.js
+tsconfig.prod.json
 jest.config.js
 webpack.config.js
