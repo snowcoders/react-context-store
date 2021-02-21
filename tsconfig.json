@@ -12,7 +12,7 @@
     "rootDir": "./src/",
     "sourceMap": true,
     "target": "ES5",
-    "removeComments": true
+    "removeComments": false
   },
   "extends": "@snowcoders/renovate-config",
   "include": ["./src/**/*.ts", "./src/**/*.tsx"]
