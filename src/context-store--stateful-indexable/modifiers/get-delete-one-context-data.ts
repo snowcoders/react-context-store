@@ -1,3 +1,4 @@
+import { ContextStoreData } from "../../context-store--basic/interfaces";
 import { errorMessages, Stateful, statefulStates } from "../../shared";
 import {
   IndexableStatefulContextStore,
@@ -74,16 +75,12 @@ export async function getDeleteOneContextData<
         statefulStates.error,
         error
       );
-      if (value == null) {
-        return Promise.reject(errorMessages.indexNotFound);
-      } else if (typeof e === "string") {
+      if (typeof e === "string") {
         return Promise.reject(e);
       } else {
-        return Promise.reject(
-          e.message || errorMessages.unknownPreloadOrActionReject
-        );
+        throw e;
       }
-    } catch {
+    } catch (e2) {
       await setContextDataForUpdateOne(
         contextData,
         setContextData,
@@ -91,7 +88,7 @@ export async function getDeleteOneContextData<
         getIndex,
         statefulStates.error
       );
-      return Promise.reject(errorMessages.errorCallbackRejected);
+      return Promise.reject(e2.message || errorMessages.errorCallbackRejected);
     }
   }
 }
@@ -110,26 +107,37 @@ export async function setContextDataForDeleteOne<
   ) => Promise<IndexableStatefulContextStoreValueData<TContextStore> | null>,
   deleteIfNull: boolean = true
 ) {
-  // Handle preload scenario
-  const index = getIndex(params);
-  const oldValue = contextData.data[index].data;
-  const defaultValue = deleteIfNull ? null : oldValue;
-  const value = action ? await action(params) : defaultValue;
-  // Handle data updates
-  if (value != null) {
-    const newStore = getUpdatedContextDataForUpdateOne(
-      contextData,
-      index,
-      // @ts-expect-error - TODO: Remove this
-      value,
-      state
+  try {
+    // Handle preload scenario
+    const index = getIndex(params);
+    const oldValue: IndexableStatefulContextStoreValueData<TContextStore> =
+      // @ts-expect-error
+      contextData.data[index].data;
+    const defaultValue = deleteIfNull ? null : oldValue;
+    const value = action ? await action(params) : defaultValue;
+    // Handle data updates
+    if (value != null) {
+      const newStore = getUpdatedContextDataForUpdateOne(
+        contextData,
+        index,
+        value,
+        state
+      );
+      setContextData(newStore);
+      // @ts-expect-error
+      return newStore.data[index].data;
+    } else {
+      const newStore = getUpdatedContextDataForDeleteOne(contextData, index);
+      setContextData(newStore);
+      return oldValue;
+    }
+  } catch (e) {
+    if (typeof e === "string") {
+      return Promise.reject(e);
+    }
+    return Promise.reject(
+      e?.message || errorMessages.unknownPreloadOrActionReject
     );
-    setContextData(newStore);
-    return newStore.data[index].data;
-  } else {
-    const newStore = getUpdatedContextDataForDeleteOne(contextData, index);
-    setContextData(newStore);
-    return oldValue;
   }
 }
 

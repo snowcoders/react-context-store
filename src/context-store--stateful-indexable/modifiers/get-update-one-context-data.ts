@@ -1,6 +1,7 @@
 import { errorMessages, Stateful, statefulStates } from "../../shared";
 import {
   IndexableStatefulContextStore,
+  IndexableStatefulContextStoreValue,
   IndexableStatefulContextStoreValueData,
   IndexableStatefulContextStoreKey,
 } from "../interfaces";
@@ -88,11 +89,8 @@ export async function getUpdateOneContextData<
       });
       if (typeof e2 === "string") {
         return Promise.reject(e2);
-      } else {
-        return Promise.reject(
-          e2.message || errorMessages.unknownPreloadOrActionReject
-        );
       }
+      return Promise.reject(errorMessages.unknownPreloadOrActionReject);
     }
   }
 }
@@ -112,18 +110,28 @@ export async function setContextDataForUpdateOne<
     IndexableStatefulContextStoreValueData<TContextStore>
   > | null>
 ) {
-  // Handle preload scenario
-  const index = getIndex(params);
-  const value = action ? await action(params) : null;
+  try {
+    // Handle preload scenario
+    const index = getIndex(params);
+    const value = action ? await action(params) : null;
 
-  const newStore = getUpdatedContextDataForUpdateOne(
-    contextData,
-    index,
-    value,
-    state
-  );
-  setContextData(newStore);
-  return newStore.data[index].data;
+    const newStore = getUpdatedContextDataForUpdateOne(
+      contextData,
+      index,
+      value,
+      state
+    );
+    setContextData(newStore);
+    const d = newStore.data;
+    let a: IndexableStatefulContextStoreValue<TContextStore> =
+      // @ts-expect-error
+      d[index];
+    return a.data;
+  } catch (e) {
+    return Promise.reject(
+      e?.message || errorMessages.unknownPreloadOrActionReject
+    );
+  }
 }
 
 export function getUpdatedContextDataForUpdateOne<
@@ -135,7 +143,9 @@ export function getUpdatedContextDataForUpdateOne<
   state: keyof typeof statefulStates
 ): TContextStore {
   const { data } = store;
-  const oldValue = data[index];
+  const oldValue: IndexableStatefulContextStoreValue<TContextStore> =
+    // @ts-expect-error
+    data[index];
   if (oldValue == null) {
     throw new Error(errorMessages.indexNotFound);
   }

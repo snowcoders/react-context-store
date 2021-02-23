@@ -11,9 +11,7 @@ type User = {
   name: string;
 };
 
-type UserContextStore = ContextStore<{
-  [key: string]: ContextStore<User>;
-}>;
+type UserContextStore = ContextStore<{ [key: string]: ContextStore<User> }>;
 describe(getTestName(__dirname), () => {
   describe("getCreateOneContextData", () => {
     describe("reactive", () => {

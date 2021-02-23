@@ -15,4 +15,6 @@ export type IndexableContextStoreValue<
 
 export type IndexableContextStoreKey<
   TContextStore extends IndexableContextStore<any>
-> = keyof TContextStore["data"];
+> = TContextStore["data"] extends Array<any>
+  ? number
+  : keyof TContextStore["data"];

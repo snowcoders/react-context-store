@@ -1,6 +1,6 @@
+import { ContextStore } from "../../context-store--basic";
 import { errorMessages } from "../../shared";
 import { getTestName } from "../../test-utils/get-test-name";
-import { IndexableStatefulContextStore } from "../interfaces";
 import {
   getDeleteOneContextData,
   getUpdatedContextDataForDeleteOne,
@@ -12,7 +12,7 @@ type User = {
   name: string;
 };
 
-type UserContextStore = IndexableStatefulContextStore<User>;
+type UserContextStore = ContextStore<{ [key: string]: ContextStore<User> }>;
 describe(getTestName(__dirname), () => {
   describe("Reactive delete", () => {
     describe("action resolves", () => {
@@ -20,7 +20,7 @@ describe(getTestName(__dirname), () => {
         const setContextData = jest.fn();
         const statefulIndexStore: UserContextStore = {
           data: {
-            0: {
+            "0": {
               data: {
                 id: "0",
                 name: "name 0",

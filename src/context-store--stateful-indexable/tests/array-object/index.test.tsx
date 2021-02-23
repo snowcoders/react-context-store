@@ -1,5 +1,6 @@
 import { configure } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
+import { ContextStore } from "../../../context-store--basic";
 import { errorMessages } from "../../../shared";
 import { ShallowContextHarness } from "../../../test-utils/harness";
 import { ApiProvider, Context, Item } from "./index.mock";
@@ -8,16 +9,23 @@ configure({
   adapter: new Adapter(),
 });
 
+function toContextStore<T>(data: T): ContextStore<T> {
+  return {
+    data: data,
+    state: "success",
+  };
+}
+
 describe("replaceAll", () => {
   it("completely rewrites all data", async () => {
     // Setup
-    const data1: Array<Item> = [
+    const data1: Array<ContextStore<Item>> = [
       {
         id: 0,
         name: "Name 0",
       },
-    ];
-    const data2: Array<Item> = [
+    ].map(toContextStore);
+    const data2: Array<ContextStore<Item>> = [
       {
         id: 1,
         name: "Name 1",
@@ -30,7 +38,7 @@ describe("replaceAll", () => {
         id: 3,
         name: "Name 3",
       },
-    ];
+    ].map(toContextStore);
 
     // Work
     const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
@@ -60,7 +68,7 @@ describe("replaceAll", () => {
 describe("updateOne", () => {
   it("only updates one value with updateOne", async () => {
     // Setup
-    const originalData: Array<Item> = [
+    const originalData: Array<ContextStore<Item>> = [
       {
         id: 1,
         name: "Name 1",
@@ -73,7 +81,7 @@ describe("updateOne", () => {
         id: 3,
         name: "Name 3",
       },
-    ];
+    ].map(toContextStore);
     const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
     let result = harness.getContextData();
     await result.replaceAll(originalData);
@@ -83,7 +91,7 @@ describe("updateOne", () => {
 
     // Work
     await result.updateOne({
-      ...originalData[1],
+      ...originalData[1].data,
       name: "New name",
     });
     await harness.waitForAsyncTasks();
@@ -100,7 +108,7 @@ describe("updateOne", () => {
 describe("createOne", () => {
   it("creates a new entry", async () => {
     // Setup
-    const originalData: Array<Item> = [
+    const originalData: Array<ContextStore<Item>> = [
       {
         id: 1,
         name: "Name 1",
@@ -113,7 +121,7 @@ describe("createOne", () => {
         id: 3,
         name: "Name 3",
       },
-    ];
+    ].map(toContextStore);
     const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
     let result = harness.getContextData();
     await result.replaceAll(originalData);
@@ -134,15 +142,17 @@ describe("createOne", () => {
     expect(result.data[0]).toBe(originalData[0]);
     expect(result.data[1]).toBe(originalData[1]);
     expect(result.data[2]).toBe(originalData[2]);
-    expect(result.data[3]).toEqual({
-      id: 0,
-      name: "New name",
-    });
+    expect(result.data[3]).toEqual(
+      toContextStore({
+        id: 0,
+        name: "New name",
+      })
+    );
   });
 
   it("creates a duplicate entry", async () => {
     // Setup
-    const originalData: Array<Item> = [
+    const originalData: Array<ContextStore<Item>> = [
       {
         id: 1,
         name: "Name 1",
@@ -155,7 +165,7 @@ describe("createOne", () => {
         id: 3,
         name: "Name 3",
       },
-    ];
+    ].map(toContextStore);
     const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
     let result = harness.getContextData();
     await result.replaceAll(originalData);
@@ -176,17 +186,19 @@ describe("createOne", () => {
     expect(result.data[0]).toBe(originalData[0]);
     expect(result.data[1]).toBe(originalData[1]);
     expect(result.data[2]).toBe(originalData[2]);
-    expect(result.data[3]).toEqual({
-      id: 0,
-      name: "New name",
-    });
+    expect(result.data[3]).toEqual(
+      toContextStore({
+        id: 0,
+        name: "New name",
+      })
+    );
   });
 });
 
 describe("deleteOne", () => {
   it("deletes an existing value", async () => {
     // Setup
-    const originalData: Array<Item> = [
+    const originalData: Array<ContextStore<Item>> = [
       {
         id: 1,
         name: "Name 1",
@@ -199,7 +211,7 @@ describe("deleteOne", () => {
         id: 3,
         name: "Name 3",
       },
-    ];
+    ].map(toContextStore);
     const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
     let result = harness.getContextData();
     await result.replaceAll(originalData);
@@ -222,7 +234,7 @@ describe("deleteOne", () => {
 
   it("throws reject when deleting non-existant value", async () => {
     // Setup
-    const originalData: Array<Item> = [
+    const originalData: Array<ContextStore<Item>> = [
       {
         id: 1,
         name: "Name 1",
@@ -235,7 +247,7 @@ describe("deleteOne", () => {
         id: 3,
         name: "Name 3",
       },
-    ];
+    ].map(toContextStore);
     const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
     let result = harness.getContextData();
     await result.replaceAll(originalData);
