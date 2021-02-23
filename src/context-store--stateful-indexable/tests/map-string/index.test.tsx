@@ -1,5 +1,6 @@
 import { configure } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
+import { ContextStore } from "../../../context-store--basic";
 import { errorMessages } from "../../../shared";
 import { ShallowContextHarness } from "../../../test-utils/harness";
 import { ApiProvider, Context, ContextValueData, Item } from "./index.mock";
@@ -8,28 +9,35 @@ configure({
   adapter: new Adapter(),
 });
 
+function toContextStore<T>(data: T): ContextStore<T> {
+  return {
+    data: data,
+    state: "success",
+  };
+}
+
 describe("replaceAll", () => {
   it("completely rewrites all data", async () => {
     // Setup
     const data1: ContextValueData = {
-      a: {
+      a: toContextStore({
         id: "a",
         name: "Name a",
-      },
+      }),
     };
     const data2: ContextValueData = {
-      b: {
+      b: toContextStore({
         id: "b",
         name: "Name b",
-      },
-      c: {
+      }),
+      c: toContextStore({
         id: "c",
         name: "Name c",
-      },
-      d: {
+      }),
+      d: toContextStore({
         id: "d",
         name: "Name d",
-      },
+      }),
     };
 
     // Work
@@ -61,10 +69,10 @@ describe("createOne", () => {
   it("creates a new entry", async () => {
     // Setup
     const originalData: ContextValueData = {
-      a: {
+      a: toContextStore({
         id: "a",
         name: "Name a",
-      },
+      }),
     };
     const newEntry: Item = {
       id: "b",
@@ -85,16 +93,16 @@ describe("createOne", () => {
     result = harness.getContextData();
     expect(Object.keys(result.data).length).toBe(2);
     expect(result.data["a"]).toBe(originalData["a"]);
-    expect(result.data["b"]).toEqual(newEntry);
+    expect(result.data["b"]).toEqual(toContextStore(newEntry));
   });
 
   it("creates a duplicate entry overwriting the old entry", async () => {
     // Setup
     const originalData: ContextValueData = {
-      a: {
+      a: toContextStore({
         id: "a",
         name: "Name a",
-      },
+      }),
     };
     const newEntry: Item = {
       id: "a",
@@ -114,7 +122,7 @@ describe("createOne", () => {
     // Verify
     result = harness.getContextData();
     expect(Object.keys(result.data).length).toBe(1);
-    expect(result.data["a"]).toEqual(newEntry);
+    expect(result.data["a"]).toEqual(toContextStore(newEntry));
   });
 });
 
@@ -122,18 +130,18 @@ describe("updateOne", () => {
   it("only updates one value", async () => {
     // Setup
     const originalData: ContextValueData = {
-      b: {
+      b: toContextStore({
         id: "b",
         name: "Name b",
-      },
-      c: {
+      }),
+      c: toContextStore({
         id: "c",
         name: "Name c",
-      },
-      d: {
+      }),
+      d: toContextStore({
         id: "d",
         name: "Name d",
-      },
+      }),
     };
     const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
     let result = harness.getContextData();
@@ -144,7 +152,7 @@ describe("updateOne", () => {
 
     // Work
     await result.updateOne({
-      ...originalData["c"],
+      ...originalData["c"].data,
       name: "New name",
     });
     await harness.waitForAsyncTasks();
@@ -160,18 +168,18 @@ describe("updateOne", () => {
   it("rejects updateOne when index is not found", async () => {
     // Setup
     const originalData: ContextValueData = {
-      b: {
+      b: toContextStore({
         id: "b",
         name: "Name b",
-      },
-      c: {
+      }),
+      c: toContextStore({
         id: "c",
         name: "Name c",
-      },
-      d: {
+      }),
+      d: toContextStore({
         id: "d",
         name: "Name d",
-      },
+      }),
     };
     const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
     let result = harness.getContextData();
@@ -198,18 +206,18 @@ describe("deleteOne", () => {
   it("only deletes one value", async () => {
     // Setup
     const originalData: ContextValueData = {
-      b: {
+      b: toContextStore({
         id: "b",
         name: "Name b",
-      },
-      c: {
+      }),
+      c: toContextStore({
         id: "c",
         name: "Name c",
-      },
-      d: {
+      }),
+      d: toContextStore({
         id: "d",
         name: "Name d",
-      },
+      }),
     };
     const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
     let result = harness.getContextData();
@@ -219,8 +227,13 @@ describe("deleteOne", () => {
     expect(Object.keys(result.data).length).toBe(3);
 
     // Work
-    await result.deleteOne({
+    await expect(
+      result.deleteOne({
+        id: "c",
+      })
+    ).resolves.toEqual({
       id: "c",
+      name: "Name c",
     });
     await harness.waitForAsyncTasks();
 
@@ -235,18 +248,18 @@ describe("deleteOne", () => {
   it("rejects when attempting to delete item that is not loaded", async () => {
     // Setup
     const originalData: ContextValueData = {
-      b: {
+      b: toContextStore({
         id: "b",
         name: "Name b",
-      },
-      c: {
+      }),
+      c: toContextStore({
         id: "c",
         name: "Name c",
-      },
-      d: {
+      }),
+      d: toContextStore({
         id: "d",
         name: "Name d",
-      },
+      }),
     };
     const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
     let result = harness.getContextData();
@@ -266,25 +279,25 @@ describe("deleteOne", () => {
   it("sets an error state if delete action fails", async () => {
     // Setup
     const originalData: ContextValueData = {
-      b: {
+      b: toContextStore({
         id: "b",
         name: "Name b",
-      },
-      c: {
+      }),
+      c: toContextStore({
         id: "c",
         name: "Name c",
-      },
-      d: {
+      }),
+      d: toContextStore({
         id: "d",
         name: "Name d",
-      },
+      }),
     };
     const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
     let result = harness.getContextData();
     const { rejectId } = result;
     await result.replaceAll({
       ...originalData,
-      [rejectId]: { id: rejectId, name: "Reject id" },
+      [rejectId]: toContextStore({ id: rejectId, name: "Reject id" }),
     });
     await harness.waitForAsyncTasks();
     result = harness.getContextData();
@@ -301,7 +314,12 @@ describe("deleteOne", () => {
     // Verify
     result = harness.getContextData();
     expect(Object.keys(result.data).length).toBe(4);
-    expect(result.data[rejectId]).toEqual({ id: rejectId, name: "Reject id" });
-    expect(result.state).toEqual("error");
+    // Individual state is error
+    expect(result.data[rejectId]).toEqual({
+      data: { id: rejectId, name: "Reject id" },
+      state: "error",
+    });
+    // List state is success
+    expect(result.state).toEqual("success");
   });
 });

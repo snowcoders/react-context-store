@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Fixed typing issues with useIndexableStatefulContextStore
+
 ## [1.0.0-beta.3] - 2021-02-21
 
 - Fixed console warnings

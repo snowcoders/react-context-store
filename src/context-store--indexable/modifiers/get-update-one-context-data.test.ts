@@ -153,7 +153,7 @@ describe(getTestName(__dirname), () => {
         },
         state: "success",
       };
-      return expect(
+      await expect(
         getUpdateOneContextData(
           statefulIndexStore,
           setContextData,
