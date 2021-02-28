@@ -97,7 +97,7 @@ describe("updateOne", () => {
   });
 });
 
-describe("createOne", () => {
+describe("pushOne", () => {
   it("creates a new entry", async () => {
     // Setup
     const originalData: Array<Item> = [
@@ -122,7 +122,7 @@ describe("createOne", () => {
     expect(result.data.length).toBe(3);
 
     // Work
-    await result.createOne({
+    await result.pushOne({
       id: 0,
       name: "New name",
     });
@@ -139,8 +139,10 @@ describe("createOne", () => {
       name: "New name",
     });
   });
+});
 
-  it("creates a duplicate entry", async () => {
+describe("unshiftOne", () => {
+  it("creates a new entry", async () => {
     // Setup
     const originalData: Array<Item> = [
       {
@@ -164,7 +166,7 @@ describe("createOne", () => {
     expect(result.data.length).toBe(3);
 
     // Work
-    await result.createOne({
+    await result.unshiftOne({
       id: 0,
       name: "New name",
     });
@@ -173,13 +175,13 @@ describe("createOne", () => {
     // Verify
     result = harness.getContextData();
     expect(result.data.length).toBe(4);
-    expect(result.data[0]).toBe(originalData[0]);
-    expect(result.data[1]).toBe(originalData[1]);
-    expect(result.data[2]).toBe(originalData[2]);
-    expect(result.data[3]).toEqual({
+    expect(result.data[0]).toEqual({
       id: 0,
       name: "New name",
     });
+    expect(result.data[1]).toBe(originalData[0]);
+    expect(result.data[2]).toBe(originalData[1]);
+    expect(result.data[3]).toBe(originalData[2]);
   });
 });
 

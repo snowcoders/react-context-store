@@ -58,18 +58,18 @@ export async function getCreateOneContextData<
     }
   } catch (e) {
     try {
-      value = await setContextDataForCreateOne(
-        contextData,
-        setContextData,
-        params,
-        getIndex,
-        statefulStates.error,
-        error
-      );
-      if (value == null) {
-        return Promise.reject(errorMessages.indexNotFound);
+      // Creation failed, let's try to clean up but only if
+      // we created a value in the first place
+      setContextData({
+        ...contextData,
+        state: statefulStates.error,
+      });
+      if (typeof e === "string") {
+        return Promise.reject(e);
       } else {
-        return Promise.resolve(value);
+        return Promise.reject(
+          e.message || errorMessages.unknownPreloadOrActionReject
+        );
       }
     } catch {
       setContextData({
@@ -123,7 +123,7 @@ export function getUpdatedContextDataForCreateOne<
   if (Array.isArray(data)) {
     const newData: Array<IndexableContextStoreValue<TContextStore>> = [...data];
     // @ts-expect-error
-    newData.splice(index, 1, newValue);
+    newData.splice(index, 0, newValue);
     return {
       ...store,
       data: newData,

@@ -15,17 +15,19 @@ type contextStoreDataArray = Array<Item>;
 
 export type ReplaceAllParams = contextStoreDataArray;
 export type UpdateOneParams = Partial<Item> & Pick<Item, "id">;
-export type CreateOneParams = Item;
+export type PushOneParams = Item;
 export type DeleteOneParams = Pick<Item, "id">;
 export interface ContextValue extends ContextStore<contextStoreDataArray> {
-  createOne: (params: CreateOneParams) => Promise<Item>;
+  pushOne: (params: PushOneParams) => Promise<Item>;
+  unshiftOne: (params: PushOneParams) => Promise<Item>;
   deleteOne: (params: DeleteOneParams) => Promise<Item>;
   replaceAll: (params: ReplaceAllParams) => Promise<contextStoreDataArray>;
   updateOne: (params: UpdateOneParams) => Promise<Item>;
 }
 
 const defaultValue: ContextValue = {
-  createOne: getNotImplementedPromise,
+  pushOne: getNotImplementedPromise,
+  unshiftOne: getNotImplementedPromise,
   data: [],
   deleteOne: getNotImplementedPromise,
   replaceAll: getNotImplementedPromise,
@@ -55,14 +57,25 @@ export function ApiProvider(props: ProviderProps) {
     },
   });
 
-  const createOne = useCreateOneFactory({
-    action: (params: CreateOneParams) => {
+  const pushOne = useCreateOneFactory({
+    action: (params: PushOneParams) => {
       return Promise.resolve({
         ...params,
       });
     },
-    getIndex: (params: CreateOneParams) => {
+    getIndex: (params: PushOneParams) => {
       return contextValue.data.length;
+    },
+  });
+
+  const unshiftOne = useCreateOneFactory({
+    action: (params: PushOneParams) => {
+      return Promise.resolve({
+        ...params,
+      });
+    },
+    getIndex: (params: PushOneParams) => {
+      return 0;
     },
   });
 
@@ -92,7 +105,14 @@ export function ApiProvider(props: ProviderProps) {
 
   return (
     <Context.Provider
-      value={{ ...contextValue, replaceAll, updateOne, createOne, deleteOne }}
+      value={{
+        ...contextValue,
+        replaceAll,
+        updateOne,
+        pushOne,
+        deleteOne,
+        unshiftOne,
+      }}
     >
       {children}
     </Context.Provider>
