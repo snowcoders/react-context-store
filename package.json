@@ -1,7 +1,6 @@
 {
   "author": "Snowcoders",
   "description": "A two way binding solution that uses React context as a storage mechanism.",
-  "dependencies": {},
   "devDependencies": {
     "@snowcoders/renovate-config": "2.0.2",
     "@snowcoders/sortier": "3.2.1",
@@ -43,5 +42,5 @@
     "version": "changelog-updater && git add ."
   },
   "sideEffects": false,
-  "version": "1.0.0-beta.4"
+  "version": "1.0.0-beta.5"
 }

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-beta.5] - 2021-02-28
+
 - Fixed createOne overwriting existing indexes for arrays instead of inserting
 
 ## [1.0.0-beta.4] - 2021-02-23
