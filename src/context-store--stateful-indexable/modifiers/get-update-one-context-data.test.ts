@@ -12,14 +12,14 @@ type User = {
   name: string;
 };
 
-type UserContextStore = ContextStore<{
+type UserMapContextStore = ContextStore<{
   [key: string]: ContextStore<User>;
 }>;
 describe(getTestName(__dirname), () => {
   describe("getUpdateOneContextData", () => {
     it("Updates an entry when only action is defined", async () => {
       const setContextData = jest.fn();
-      const statefulIndexStore: UserContextStore = {
+      const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
             data: {
@@ -88,7 +88,7 @@ describe(getTestName(__dirname), () => {
 
     it("Updates an entry when preload", async () => {
       const setContextData = jest.fn();
-      const statefulIndexStore: UserContextStore = {
+      const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
             data: {
@@ -162,7 +162,7 @@ describe(getTestName(__dirname), () => {
 
     it("Rejects when index cannot be found", async () => {
       const setContextData = jest.fn();
-      const statefulIndexStore: UserContextStore = {
+      const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
             data: {
@@ -197,7 +197,7 @@ describe(getTestName(__dirname), () => {
   describe("setContextDataForUpdateOne", () => {
     it("Updates an existing entry when action is defined", async () => {
       const setContextData = jest.fn();
-      const statefulIndexStore: UserContextStore = {
+      const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
             data: {
@@ -247,7 +247,7 @@ describe(getTestName(__dirname), () => {
 
   describe("getUpdatedContextDataForUpdateOne", () => {
     it("Updates existing entry", () => {
-      const statefulIndexStore: UserContextStore = {
+      const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
             data: {

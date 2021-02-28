@@ -12,7 +12,7 @@ type User = {
   name: string;
 };
 
-type UserContextStore = ContextStore<{
+type UserMapContextStore = ContextStore<{
   [key: string]: User;
 }>;
 describe(getTestName(__dirname), () => {
@@ -20,7 +20,7 @@ describe(getTestName(__dirname), () => {
     describe("action resolves", () => {
       it("Deletes item (setting states) and returns expected result", async () => {
         const setContextData = jest.fn();
-        const statefulIndexStore: UserContextStore = {
+        const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
               id: "0",
@@ -75,7 +75,7 @@ describe(getTestName(__dirname), () => {
 
       it("Updates item via preload, deletes item (setting states), and returns expected result", async () => {
         const setContextData = jest.fn();
-        const statefulIndexStore: UserContextStore = {
+        const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
               id: "0",
@@ -138,7 +138,7 @@ describe(getTestName(__dirname), () => {
       it("rejects request and updates state to loading then error", async () => {
         const rejectErrorMessage = "Test reject error message";
         const setContextData = jest.fn();
-        const statefulIndexStore: UserContextStore = {
+        const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
               id: "0",
@@ -195,7 +195,7 @@ describe(getTestName(__dirname), () => {
       it("rejects request and updates state to loading then custom error", async () => {
         const rejectErrorMessage = "Test reject error message";
         const setContextData = jest.fn();
-        const statefulIndexStore: UserContextStore = {
+        const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
               id: "0",
@@ -257,7 +257,7 @@ describe(getTestName(__dirname), () => {
 
       it("Throws error if reject happens in error handler", async () => {
         const setContextData = jest.fn();
-        const statefulIndexStore: UserContextStore = {
+        const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
               id: "0",
@@ -291,7 +291,7 @@ describe(getTestName(__dirname), () => {
       it("rejects request and updates state to loading then error", async () => {
         const rejectErrorMessage = "Test reject error message";
         const setContextData = jest.fn();
-        const statefulIndexStore: UserContextStore = {
+        const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
               id: "0",
@@ -348,7 +348,7 @@ describe(getTestName(__dirname), () => {
       it("rejects request and updates state to loading then custom error", async () => {
         const rejectErrorMessage = "Test reject error message";
         const setContextData = jest.fn();
-        const statefulIndexStore: UserContextStore = {
+        const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
               id: "0",
@@ -410,7 +410,7 @@ describe(getTestName(__dirname), () => {
 
       it("Throws error if reject happens in error handler", async () => {
         const setContextData = jest.fn();
-        const statefulIndexStore: UserContextStore = {
+        const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
               id: "0",
@@ -472,7 +472,7 @@ describe(getTestName(__dirname), () => {
   describe("Pre-emptive", () => {
     it("Removes data pre-emptively if preload resolves null", async () => {
       const setContextData = jest.fn();
-      const statefulIndexStore: UserContextStore = {
+      const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
             id: "0",
@@ -524,7 +524,7 @@ describe(getTestName(__dirname), () => {
 
   it("Deletes an entry when action is defined", async () => {
     const setContextData = jest.fn();
-    const statefulIndexStore: UserContextStore = {
+    const statefulIndexStore: UserMapContextStore = {
       data: {
         0: {
           id: "0",
@@ -561,7 +561,7 @@ describe(getTestName(__dirname), () => {
   });
 
   it("Deletes an entry", () => {
-    const statefulIndexStore: UserContextStore = {
+    const statefulIndexStore: UserMapContextStore = {
       data: {
         0: {
           id: "0",

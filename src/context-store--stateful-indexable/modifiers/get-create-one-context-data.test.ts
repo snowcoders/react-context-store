@@ -11,13 +11,13 @@ type User = {
   name: string;
 };
 
-type UserContextStore = ContextStore<{ [key: string]: ContextStore<User> }>;
+type UserMapContextStore = ContextStore<{ [key: string]: ContextStore<User> }>;
 describe(getTestName(__dirname), () => {
   describe("getCreateOneContextData", () => {
     describe("reactive", () => {
       it("Add a new entry when only action is defined", async () => {
         const setContextData = jest.fn();
-        const statefulIndexStore: UserContextStore = {
+        const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
               data: {
@@ -92,7 +92,7 @@ describe(getTestName(__dirname), () => {
 
       it("Cleans up load state if action rejects", async () => {
         const setContextData = jest.fn();
-        const statefulIndexStore: UserContextStore = {
+        const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
               data: {
@@ -160,7 +160,7 @@ describe(getTestName(__dirname), () => {
     describe("proactive", () => {
       it("Add a new entry when preload returns value", async () => {
         const setContextData = jest.fn();
-        const statefulIndexStore: UserContextStore = {
+        const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
               data: {
@@ -245,7 +245,7 @@ describe(getTestName(__dirname), () => {
 
       it("Cleans up load state if action rejects", async () => {
         const setContextData = jest.fn();
-        const statefulIndexStore: UserContextStore = {
+        const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
               data: {
@@ -327,7 +327,7 @@ describe(getTestName(__dirname), () => {
   describe("setContextDataForCreateOne", () => {
     it("Adds a new entry when action is defined", async () => {
       const setContextData = jest.fn();
-      const statefulIndexStore: UserContextStore = {
+      const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
             data: {
@@ -385,7 +385,7 @@ describe(getTestName(__dirname), () => {
 
   describe("getUpdatedContextDataForCreateOne", () => {
     it("Adds a new entry", () => {
-      const statefulIndexStore: UserContextStore = {
+      const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
             data: {
