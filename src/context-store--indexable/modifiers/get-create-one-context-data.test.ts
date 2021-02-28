@@ -11,14 +11,14 @@ type User = {
   name: string;
 };
 
-type UserContextStore = ContextStore<{
+type UserMapContextStore = ContextStore<{
   [key: string]: User;
 }>;
 describe(getTestName(__dirname), () => {
   describe("getCreateOneContextData", () => {
     it("Add a new entry when only action is defined", async () => {
       const setContextData = jest.fn();
-      const statefulIndexStore: UserContextStore = {
+      const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
             id: "0",
@@ -83,7 +83,7 @@ describe(getTestName(__dirname), () => {
   describe("setContextDataForCreateOne", () => {
     it("Adds a new entry when action is defined", async () => {
       const setContextData = jest.fn();
-      const statefulIndexStore: UserContextStore = {
+      const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
             id: "0",
@@ -132,7 +132,7 @@ describe(getTestName(__dirname), () => {
 
   describe("getUpdatedContextDataForCreateOne", () => {
     it("Adds a new entry", () => {
-      const statefulIndexStore: UserContextStore = {
+      const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
             id: "0",
