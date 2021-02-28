@@ -4,7 +4,6 @@ import {
   IndexableStatefulContextStoreValueData,
   IndexableStatefulContextStoreKey,
 } from "../interfaces";
-import { setContextDataForDeleteOne } from "./get-delete-one-context-data";
 
 export async function getCreateOneContextData<
   Params,
@@ -60,10 +59,21 @@ export async function getCreateOneContextData<
       return Promise.resolve(value);
     }
   } catch (e) {
-    setContextData({
-      ...contextData,
-      state: statefulStates.success,
-    });
+    if (error) {
+      await setContextDataForCreateOne(
+        contextData,
+        setContextData,
+        params,
+        getIndex,
+        statefulStates.error,
+        error
+      );
+    } else {
+      setContextData({
+        ...contextData,
+        state: statefulStates.success,
+      });
+    }
     if (typeof e === "string") {
       return Promise.reject(e);
     } else {
@@ -117,7 +127,7 @@ export function getUpdatedContextDataForCreateOne<
       IndexableStatefulContextStoreValueData<TContextStore>
     > = [...data];
     // @ts-expect-error
-    newData.splice(index, 1, newValue);
+    newData.splice(index, 0, newValue);
     return {
       ...store,
       data: newData,

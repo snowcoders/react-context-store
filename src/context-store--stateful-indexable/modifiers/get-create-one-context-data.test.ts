@@ -12,47 +12,14 @@ type User = {
 };
 
 type UserMapContextStore = ContextStore<{ [key: string]: ContextStore<User> }>;
+type UserArrayContextStore = ContextStore<Array<ContextStore<User>>>;
 describe(getTestName(__dirname), () => {
   describe("getCreateOneContextData", () => {
-    describe("reactive", () => {
-      it("Add a new entry when only action is defined", async () => {
-        const setContextData = jest.fn();
-        const statefulIndexStore: UserMapContextStore = {
-          data: {
-            0: {
-              data: {
-                id: "0",
-                name: "name 0",
-              },
-              state: "success",
-            },
-          },
-          state: "success",
-        };
-        const result = await getCreateOneContextData(
-          statefulIndexStore,
-          setContextData,
-          {
-            id: "1",
-            name: "name 1",
-          },
-          {
-            getIndex: () => "1",
-            action: (params) => {
-              return Promise.resolve(params);
-            },
-          }
-        );
-
-        // Expect the return of the call to give me the return value of the promise
-        expect(result).toMatchObject({
-          id: "1",
-          name: "name 1",
-        });
-        // Expect setContextData to have been called first with loading
-        expect(setContextData).toHaveBeenNthCalledWith(
-          1,
-          expect.objectContaining({
+    describe("adds into map", () => {
+      describe("reactive", () => {
+        it("Add a new entry when only action is defined", async () => {
+          const setContextData = jest.fn();
+          const statefulIndexStore: UserMapContextStore = {
             data: {
               0: {
                 data: {
@@ -63,50 +30,8 @@ describe(getTestName(__dirname), () => {
               },
             },
             state: "success",
-          })
-        );
-        // Expect setContextData to have been called first with then success
-        expect(setContextData).toHaveBeenNthCalledWith(
-          2,
-          expect.objectContaining({
-            data: {
-              0: {
-                data: {
-                  id: "0",
-                  name: "name 0",
-                },
-                state: "success",
-              },
-              1: {
-                data: {
-                  id: "1",
-                  name: "name 1",
-                },
-                state: "success",
-              },
-            },
-            state: "success",
-          })
-        );
-      });
-
-      it("Cleans up load state if action rejects", async () => {
-        const setContextData = jest.fn();
-        const statefulIndexStore: UserMapContextStore = {
-          data: {
-            0: {
-              data: {
-                id: "0",
-                name: "name 0",
-              },
-              state: "success",
-            },
-          },
-          state: "success",
-        };
-        const rejectMessage = "fail time";
-        await expect(
-          getCreateOneContextData(
+          };
+          const result = await getCreateOneContextData(
             statefulIndexStore,
             setContextData,
             {
@@ -116,16 +41,60 @@ describe(getTestName(__dirname), () => {
             {
               getIndex: () => "1",
               action: (params) => {
-                return Promise.reject(rejectMessage);
+                return Promise.resolve(params);
               },
             }
-          )
-        ).rejects.toEqual(rejectMessage);
+          );
 
-        // Expect setContextData to have been called first with loading
-        expect(setContextData).toHaveBeenNthCalledWith(
-          1,
-          expect.objectContaining({
+          // Expect the return of the call to give me the return value of the promise
+          expect(result).toMatchObject({
+            id: "1",
+            name: "name 1",
+          });
+          // Expect setContextData to have been called first with loading
+          expect(setContextData).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+              data: {
+                0: {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+              },
+              state: "success",
+            })
+          );
+          // Expect setContextData to have been called first with then success
+          expect(setContextData).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+              data: {
+                0: {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+                1: {
+                  data: {
+                    id: "1",
+                    name: "name 1",
+                  },
+                  state: "success",
+                },
+              },
+              state: "success",
+            })
+          );
+        });
+
+        it("Cleans up load state if action rejects", async () => {
+          const setContextData = jest.fn();
+          const statefulIndexStore: UserMapContextStore = {
             data: {
               0: {
                 data: {
@@ -136,12 +105,64 @@ describe(getTestName(__dirname), () => {
               },
             },
             state: "success",
-          })
-        );
-        // Expect setContextData to have been called first with then success
-        expect(setContextData).toHaveBeenNthCalledWith(
-          2,
-          expect.objectContaining({
+          };
+          const rejectMessage = "fail time";
+          await expect(
+            getCreateOneContextData(
+              statefulIndexStore,
+              setContextData,
+              {
+                id: "1",
+                name: "name 1",
+              },
+              {
+                getIndex: () => "1",
+                action: (params) => {
+                  return Promise.reject(rejectMessage);
+                },
+              }
+            )
+          ).rejects.toEqual(rejectMessage);
+
+          // Expect setContextData to have been called first with loading
+          expect(setContextData).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+              data: {
+                0: {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+              },
+              state: "success",
+            })
+          );
+          // Expect setContextData to have been called first with then success
+          expect(setContextData).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+              data: {
+                0: {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+              },
+              state: "success",
+            })
+          );
+        });
+      });
+
+      describe("proactive", () => {
+        it("Add a new entry when preload returns value", async () => {
+          const setContextData = jest.fn();
+          const statefulIndexStore: UserMapContextStore = {
             data: {
               0: {
                 data: {
@@ -152,174 +173,951 @@ describe(getTestName(__dirname), () => {
               },
             },
             state: "success",
-          })
-        );
+          };
+          const result = await getCreateOneContextData(
+            statefulIndexStore,
+            setContextData,
+            {
+              id: "1",
+              name: "name 1",
+            },
+            {
+              getIndex: () => "1",
+              action: (params) => {
+                return Promise.resolve(params);
+              },
+              preload: (params) => {
+                return Promise.resolve(params);
+              },
+            }
+          );
+
+          // Expect the return of the call to give me the return value of the promise
+          expect(result).toMatchObject({
+            id: "1",
+            name: "name 1",
+          });
+          // Expect setContextData to have been called first with loading
+          expect(setContextData).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+              data: {
+                0: {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+                1: {
+                  data: {
+                    id: "1",
+                    name: "name 1",
+                  },
+                  state: "loading",
+                },
+              },
+              state: "success",
+            })
+          );
+          // Expect setContextData to have been called first with then success
+          expect(setContextData).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+              data: {
+                0: {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+                1: {
+                  data: {
+                    id: "1",
+                    name: "name 1",
+                  },
+                  state: "success",
+                },
+              },
+              state: "success",
+            })
+          );
+        });
+
+        it("Cleans up load state if action rejects", async () => {
+          const setContextData = jest.fn();
+          const statefulIndexStore: UserMapContextStore = {
+            data: {
+              0: {
+                data: {
+                  id: "0",
+                  name: "name 0",
+                },
+                state: "success",
+              },
+            },
+            state: "success",
+          };
+          const rejectMessage = "fail time";
+          await expect(
+            getCreateOneContextData(
+              statefulIndexStore,
+              setContextData,
+              {
+                id: "1",
+                name: "name 1",
+              },
+              {
+                getIndex: () => "1",
+                action: (params) => {
+                  return Promise.reject(rejectMessage);
+                },
+                preload: (params) => {
+                  return Promise.resolve({
+                    id: "1",
+                    name: "name 1",
+                  });
+                },
+              }
+            )
+          ).rejects.toEqual(rejectMessage);
+
+          // Expect setContextData to have been called first with loading
+          expect(setContextData).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+              data: {
+                0: {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+                1: {
+                  data: {
+                    id: "1",
+                    name: "name 1",
+                  },
+                  state: "loading",
+                },
+              },
+              state: "success",
+            })
+          );
+          // Expect setContextData to have been called first with then success
+          expect(setContextData).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+              data: {
+                0: {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+              },
+              state: "success",
+            })
+          );
+        });
       });
     });
 
-    describe("proactive", () => {
-      it("Add a new entry when preload returns value", async () => {
-        const setContextData = jest.fn();
-        const statefulIndexStore: UserMapContextStore = {
-          data: {
-            0: {
-              data: {
-                id: "0",
-                name: "name 0",
-              },
+    describe("adds into array", () => {
+      describe("to the beginning", () => {
+        describe("reactive", () => {
+          it("Add a new entry when only action is defined", async () => {
+            const setContextData = jest.fn();
+            const statefulIndexStore: UserArrayContextStore = {
+              data: [
+                {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+              ],
               state: "success",
-            },
-          },
-          state: "success",
-        };
-        const result = await getCreateOneContextData(
-          statefulIndexStore,
-          setContextData,
-          {
-            id: "1",
-            name: "name 1",
-          },
-          {
-            getIndex: () => "1",
-            action: (params) => {
-              return Promise.resolve(params);
-            },
-            preload: (params) => {
-              return Promise.resolve(params);
-            },
-          }
-        );
+            };
+            const result = await getCreateOneContextData(
+              statefulIndexStore,
+              setContextData,
+              {
+                id: "1",
+                name: "name 1",
+              },
+              {
+                getIndex: () => 0,
+                action: (params) => {
+                  return Promise.resolve(params);
+                },
+              }
+            );
 
-        // Expect the return of the call to give me the return value of the promise
-        expect(result).toMatchObject({
-          id: "1",
-          name: "name 1",
-        });
-        // Expect setContextData to have been called first with loading
-        expect(setContextData).toHaveBeenNthCalledWith(
-          1,
-          expect.objectContaining({
-            data: {
-              0: {
-                data: {
-                  id: "0",
-                  name: "name 0",
-                },
-                state: "success",
-              },
-              1: {
-                data: {
-                  id: "1",
-                  name: "name 1",
-                },
-                state: "loading",
-              },
-            },
-            state: "success",
-          })
-        );
-        // Expect setContextData to have been called first with then success
-        expect(setContextData).toHaveBeenNthCalledWith(
-          2,
-          expect.objectContaining({
-            data: {
-              0: {
-                data: {
-                  id: "0",
-                  name: "name 0",
-                },
-                state: "success",
-              },
-              1: {
-                data: {
-                  id: "1",
-                  name: "name 1",
-                },
-                state: "success",
-              },
-            },
-            state: "success",
-          })
-        );
-      });
-
-      it("Cleans up load state if action rejects", async () => {
-        const setContextData = jest.fn();
-        const statefulIndexStore: UserMapContextStore = {
-          data: {
-            0: {
-              data: {
-                id: "0",
-                name: "name 0",
-              },
-              state: "success",
-            },
-          },
-          state: "success",
-        };
-        const rejectMessage = "fail time";
-        await expect(
-          getCreateOneContextData(
-            statefulIndexStore,
-            setContextData,
-            {
+            // Expect the return of the call to give me the return value of the promise
+            expect(result).toMatchObject({
               id: "1",
               name: "name 1",
-            },
-            {
-              getIndex: () => "1",
-              action: (params) => {
-                return Promise.reject(rejectMessage);
-              },
-              preload: (params) => {
-                return Promise.resolve({
-                  id: "1",
-                  name: "name 1",
-                });
-              },
-            }
-          )
-        ).rejects.toEqual(rejectMessage);
+            });
+            // Expect setContextData to have been called first with loading
+            expect(setContextData).toHaveBeenNthCalledWith(
+              1,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+            // Expect setContextData to have been called first with then success
+            expect(setContextData).toHaveBeenNthCalledWith(
+              2,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "1",
+                      name: "name 1",
+                    },
+                    state: "success",
+                  },
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+          });
 
-        // Expect setContextData to have been called first with loading
-        expect(setContextData).toHaveBeenNthCalledWith(
-          1,
-          expect.objectContaining({
-            data: {
-              0: {
-                data: {
-                  id: "0",
-                  name: "name 0",
+          it("Does not add anything if action fails", async () => {
+            const setContextData = jest.fn();
+            const statefulIndexStore: UserArrayContextStore = {
+              data: [
+                {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
                 },
-                state: "success",
-              },
-              1: {
-                data: {
+              ],
+              state: "success",
+            };
+            const rejectMessage = "fail time";
+            await expect(
+              getCreateOneContextData(
+                statefulIndexStore,
+                setContextData,
+                {
                   id: "1",
                   name: "name 1",
                 },
-                state: "loading",
-              },
-            },
-            state: "success",
-          })
-        );
-        // Expect setContextData to have been called first with then success
-        expect(setContextData).toHaveBeenNthCalledWith(
-          2,
-          expect.objectContaining({
-            data: {
-              0: {
-                data: {
-                  id: "0",
-                  name: "name 0",
-                },
+                {
+                  getIndex: () => 0,
+                  action: (params) => {
+                    return Promise.reject(rejectMessage);
+                  },
+                }
+              )
+            ).rejects.toEqual(rejectMessage);
+
+            // Expect setContextData to have been called first with loading
+            expect(setContextData).toHaveBeenNthCalledWith(
+              1,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
                 state: "success",
+              })
+            );
+            // Expect setContextData to have been called first with then success
+            expect(setContextData).toHaveBeenNthCalledWith(
+              2,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+          });
+
+          it("Leaves data if custom error handler returns a value", async () => {
+            const setContextData = jest.fn();
+            const statefulIndexStore: UserArrayContextStore = {
+              data: [
+                {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+              ],
+              state: "success",
+            };
+            const rejectMessage = "fail time";
+            await expect(
+              getCreateOneContextData(
+                statefulIndexStore,
+                setContextData,
+                {
+                  id: "1",
+                  name: "name 1",
+                },
+                {
+                  getIndex: () => 0,
+                  action: (params) => {
+                    return Promise.reject(rejectMessage);
+                  },
+                  error: (params) => {
+                    return Promise.resolve({
+                      id: "1",
+                      name: "name 1",
+                    });
+                  },
+                }
+              )
+            ).rejects.toEqual(rejectMessage);
+
+            // Expect setContextData to have been called first with loading
+            expect(setContextData).toHaveBeenNthCalledWith(
+              1,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+            // Expect setContextData to have been called first with then success
+            expect(setContextData).toHaveBeenNthCalledWith(
+              2,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "1",
+                      name: "name 1",
+                    },
+                    state: "error",
+                  },
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+          });
+        });
+
+        describe("proactive", () => {
+          it("Add a new entry when preload returns value", async () => {
+            const setContextData = jest.fn();
+            const statefulIndexStore: UserArrayContextStore = {
+              data: [
+                {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+              ],
+              state: "success",
+            };
+            const result = await getCreateOneContextData(
+              statefulIndexStore,
+              setContextData,
+              {
+                id: "1",
+                name: "name 1",
               },
-            },
-            state: "success",
-          })
-        );
+              {
+                getIndex: () => 0,
+                action: (params) => {
+                  return Promise.resolve(params);
+                },
+                preload: (params) => {
+                  return Promise.resolve(params);
+                },
+              }
+            );
+
+            // Expect the return of the call to give me the return value of the promise
+            expect(result).toMatchObject({
+              id: "1",
+              name: "name 1",
+            });
+            // Expect setContextData to have been called first with loading
+            expect(setContextData).toHaveBeenNthCalledWith(
+              1,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "1",
+                      name: "name 1",
+                    },
+                    state: "loading",
+                  },
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+            // Expect setContextData to have been called first with then success
+            expect(setContextData).toHaveBeenNthCalledWith(
+              2,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "1",
+                      name: "name 1",
+                    },
+                    state: "success",
+                  },
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+          });
+
+          it("Removes data on action error", async () => {
+            const setContextData = jest.fn();
+            const statefulIndexStore: UserArrayContextStore = {
+              data: [
+                {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+              ],
+              state: "success",
+            };
+            const rejectMessage = "fail time";
+            await expect(
+              getCreateOneContextData(
+                statefulIndexStore,
+                setContextData,
+                {
+                  id: "1",
+                  name: "name 1",
+                },
+                {
+                  getIndex: () => 0,
+                  action: (params) => {
+                    return Promise.reject(rejectMessage);
+                  },
+                  preload: (params) => {
+                    return Promise.resolve({
+                      id: "1",
+                      name: "name 1",
+                    });
+                  },
+                }
+              )
+            ).rejects.toEqual(rejectMessage);
+
+            // Expect setContextData to have been called first with loading
+            expect(setContextData).toHaveBeenNthCalledWith(
+              1,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "1",
+                      name: "name 1",
+                    },
+                    state: "loading",
+                  },
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+            // Expect setContextData to have been called first with then success
+            expect(setContextData).toHaveBeenNthCalledWith(
+              2,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+          });
+
+          it("Leaves data with an error state if error handler is defined", async () => {
+            const setContextData = jest.fn();
+            const statefulIndexStore: UserArrayContextStore = {
+              data: [
+                {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+              ],
+              state: "success",
+            };
+            const rejectMessage = "fail time";
+            await expect(
+              getCreateOneContextData(
+                statefulIndexStore,
+                setContextData,
+                {
+                  id: "1",
+                  name: "name 1",
+                },
+                {
+                  getIndex: () => 0,
+                  action: (params) => {
+                    return Promise.reject(rejectMessage);
+                  },
+                  preload: (params) => {
+                    return Promise.resolve({
+                      id: "1",
+                      name: "name 1",
+                    });
+                  },
+                  error: (params) => {
+                    return Promise.resolve({
+                      id: "1",
+                      name: "name 1",
+                    });
+                  },
+                }
+              )
+            ).rejects.toEqual(rejectMessage);
+
+            // Expect setContextData to have been called first with loading
+            expect(setContextData).toHaveBeenNthCalledWith(
+              1,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "1",
+                      name: "name 1",
+                    },
+                    state: "loading",
+                  },
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+            // Expect setContextData to have been called first with then success
+            expect(setContextData).toHaveBeenNthCalledWith(
+              2,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "1",
+                      name: "name 1",
+                    },
+                    state: "error",
+                  },
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+          });
+        });
+      });
+
+      describe("to the end", () => {
+        describe("reactive", () => {
+          it("Add a new entry when only action is defined", async () => {
+            const setContextData = jest.fn();
+            const statefulIndexStore: UserArrayContextStore = {
+              data: [
+                {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+              ],
+              state: "success",
+            };
+            const result = await getCreateOneContextData(
+              statefulIndexStore,
+              setContextData,
+              {
+                id: "1",
+                name: "name 1",
+              },
+              {
+                getIndex: () => 1,
+                action: (params) => {
+                  return Promise.resolve(params);
+                },
+              }
+            );
+
+            // Expect the return of the call to give me the return value of the promise
+            expect(result).toMatchObject({
+              id: "1",
+              name: "name 1",
+            });
+            // Expect setContextData to have been called first with loading
+            expect(setContextData).toHaveBeenNthCalledWith(
+              1,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+            // Expect setContextData to have been called first with then success
+            expect(setContextData).toHaveBeenNthCalledWith(
+              2,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                  {
+                    data: {
+                      id: "1",
+                      name: "name 1",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+          });
+
+          it("Cleans up load state if action rejects", async () => {
+            const setContextData = jest.fn();
+            const statefulIndexStore: UserArrayContextStore = {
+              data: [
+                {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+              ],
+              state: "success",
+            };
+            const rejectMessage = "fail time";
+            await expect(
+              getCreateOneContextData(
+                statefulIndexStore,
+                setContextData,
+                {
+                  id: "1",
+                  name: "name 1",
+                },
+                {
+                  getIndex: () => 1,
+                  action: (params) => {
+                    return Promise.reject(rejectMessage);
+                  },
+                }
+              )
+            ).rejects.toEqual(rejectMessage);
+
+            // Expect setContextData to have been called first with loading
+            expect(setContextData).toHaveBeenNthCalledWith(
+              1,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+            // Expect setContextData to have been called first with then success
+            expect(setContextData).toHaveBeenNthCalledWith(
+              2,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+          });
+        });
+
+        describe("proactive", () => {
+          it("Add a new entry when preload returns value", async () => {
+            const setContextData = jest.fn();
+            const statefulIndexStore: UserArrayContextStore = {
+              data: [
+                {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+              ],
+              state: "success",
+            };
+            const result = await getCreateOneContextData(
+              statefulIndexStore,
+              setContextData,
+              {
+                id: "1",
+                name: "name 1",
+              },
+              {
+                getIndex: () => 1,
+                action: (params) => {
+                  return Promise.resolve(params);
+                },
+                preload: (params) => {
+                  return Promise.resolve(params);
+                },
+              }
+            );
+
+            // Expect the return of the call to give me the return value of the promise
+            expect(result).toMatchObject({
+              id: "1",
+              name: "name 1",
+            });
+            // Expect setContextData to have been called first with loading
+            expect(setContextData).toHaveBeenNthCalledWith(
+              1,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                  {
+                    data: {
+                      id: "1",
+                      name: "name 1",
+                    },
+                    state: "loading",
+                  },
+                ],
+                state: "success",
+              })
+            );
+            // Expect setContextData to have been called first with then success
+            expect(setContextData).toHaveBeenNthCalledWith(
+              2,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                  {
+                    data: {
+                      id: "1",
+                      name: "name 1",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+          });
+
+          it("Cleans up load state if action rejects", async () => {
+            const setContextData = jest.fn();
+            const statefulIndexStore: UserArrayContextStore = {
+              data: [
+                {
+                  data: {
+                    id: "0",
+                    name: "name 0",
+                  },
+                  state: "success",
+                },
+              ],
+              state: "success",
+            };
+            const rejectMessage = "fail time";
+            await expect(
+              getCreateOneContextData(
+                statefulIndexStore,
+                setContextData,
+                {
+                  id: "1",
+                  name: "name 1",
+                },
+                {
+                  getIndex: () => 1,
+                  action: (params) => {
+                    return Promise.reject(rejectMessage);
+                  },
+                  preload: (params) => {
+                    return Promise.resolve({
+                      id: "1",
+                      name: "name 1",
+                    });
+                  },
+                }
+              )
+            ).rejects.toEqual(rejectMessage);
+
+            // Expect setContextData to have been called first with loading
+            expect(setContextData).toHaveBeenNthCalledWith(
+              1,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                  {
+                    data: {
+                      id: "1",
+                      name: "name 1",
+                    },
+                    state: "loading",
+                  },
+                ],
+                state: "success",
+              })
+            );
+            // Expect setContextData to have been called first with then success
+            expect(setContextData).toHaveBeenNthCalledWith(
+              2,
+              expect.objectContaining({
+                data: [
+                  {
+                    data: {
+                      id: "0",
+                      name: "name 0",
+                    },
+                    state: "success",
+                  },
+                ],
+                state: "success",
+              })
+            );
+          });
+        });
       });
     });
   });
