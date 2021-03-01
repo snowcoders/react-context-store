@@ -1168,7 +1168,6 @@ describe(getTestName(__dirname), () => {
         return func(statefulIndexStore);
       });
       const result = await setContextDataForCreateOne(
-        statefulIndexStore,
         setContextData,
         {
           id: "1",

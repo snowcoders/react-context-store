@@ -34,7 +34,6 @@ export async function getCreateOneContextData<
     // Handle preload
     value =
       (await setContextDataForCreateOne(
-        contextData,
         setContextData,
         params,
         getIndex,
@@ -45,7 +44,6 @@ export async function getCreateOneContextData<
     // Handle action
     value =
       (await setContextDataForCreateOne(
-        contextData,
         setContextData,
         params,
         getIndex,
@@ -60,14 +58,17 @@ export async function getCreateOneContextData<
     }
   } catch (e) {
     if (error) {
-      await setContextDataForCreateOne(
-        contextData,
-        setContextData,
-        params,
-        getIndex,
-        statefulStates.error,
-        error
-      );
+      try {
+        await setContextDataForCreateOne(
+          setContextData,
+          params,
+          getIndex,
+          statefulStates.error,
+          error
+        );
+      } catch {
+        return Promise.reject(errorMessages.errorCallbackRejected);
+      }
     } else {
       setContextData((contextData) => {
         return {
@@ -88,7 +89,6 @@ export async function setContextDataForCreateOne<
   Params,
   TContextStore extends IndexableStatefulContextStore<any>
 >(
-  contextData: TContextStore,
   setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
   getIndex: (params: Params) => IndexableStatefulContextStoreKey<TContextStore>,

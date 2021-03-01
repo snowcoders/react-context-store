@@ -547,8 +547,8 @@ describe(getTestName(__dirname), () => {
     });
   });
 
-  describe("Pre-emptive", () => {
-    it("Removes data pre-emptively if preload resolves null", async () => {
+  describe("Proactive", () => {
+    it("Removes data proactively if preload resolves null", async () => {
       const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {

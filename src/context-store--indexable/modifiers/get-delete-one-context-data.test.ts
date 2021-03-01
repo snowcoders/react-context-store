@@ -1,11 +1,7 @@
 import { ContextStore } from "../../context-store--basic";
 import { errorMessages } from "../../shared";
 import { getTestName } from "../../test-utils/get-test-name";
-import {
-  getDeleteOneContextData,
-  getUpdatedContextDataForDeleteOne,
-  setContextDataForDeleteOne,
-} from "./get-delete-one-context-data";
+import { getDeleteOneContextData } from "./get-delete-one-context-data";
 
 type User = {
   id: string;
@@ -18,7 +14,7 @@ type UserMapContextStore = ContextStore<{
 describe(getTestName(__dirname), () => {
   describe("Reactive delete", () => {
     describe("action resolves", () => {
-      it("Deletes item (setting states) and returns expected result", async () => {
+      it("Deletes item and returns expected result", async () => {
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
@@ -141,7 +137,6 @@ describe(getTestName(__dirname), () => {
     describe("action rejects", () => {
       it("rejects request and updates state to loading then error", async () => {
         const rejectErrorMessage = "Test reject error message";
-
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
@@ -201,7 +196,6 @@ describe(getTestName(__dirname), () => {
 
       it("rejects request and updates state to loading then custom error", async () => {
         const rejectErrorMessage = "Test reject error message";
-
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
@@ -302,7 +296,6 @@ describe(getTestName(__dirname), () => {
     describe("action throws", () => {
       it("rejects request and updates state to loading then error", async () => {
         const rejectErrorMessage = "Test reject error message";
-
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
@@ -362,7 +355,6 @@ describe(getTestName(__dirname), () => {
 
       it("rejects request and updates state to loading then custom error", async () => {
         const rejectErrorMessage = "Test reject error message";
-
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
@@ -489,8 +481,8 @@ describe(getTestName(__dirname), () => {
     });
   });
 
-  describe("Pre-emptive", () => {
-    it("Removes data pre-emptively if preload resolves null", async () => {
+  describe("Proactive", () => {
+    it("Removes data proactively if preload resolves null", async () => {
       const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
@@ -541,70 +533,6 @@ describe(getTestName(__dirname), () => {
           state: "success",
         })
       );
-    });
-  });
-
-  it("Deletes an entry when action is defined", async () => {
-    const statefulIndexStore: UserMapContextStore = {
-      data: {
-        0: {
-          id: "0",
-          name: "name 0",
-        },
-      },
-      state: "success",
-    };
-    const setContextData = jest.fn((func) => {
-      return func(statefulIndexStore);
-    });
-    const result = await setContextDataForDeleteOne(
-      statefulIndexStore,
-      setContextData,
-      {
-        id: "0",
-      },
-      () => "0",
-      "loading",
-      (params) => {
-        return Promise.resolve(null);
-      }
-    );
-
-    // Expect the return of the call to give me the return value of the promise
-    expect(result).toMatchObject({
-      id: "0",
-      name: "name 0",
-    });
-    // Expect setContextData to have been set with the new store information
-    expect(setContextData).toHaveNthReturnedWith(
-      1,
-      expect.objectContaining({
-        data: {},
-        state: "loading",
-      })
-    );
-  });
-
-  it("Deletes an entry", () => {
-    const statefulIndexStore: UserMapContextStore = {
-      data: {
-        0: {
-          id: "0",
-          name: "name 0",
-        },
-      },
-      state: "success",
-    };
-    const result = getUpdatedContextDataForDeleteOne(
-      statefulIndexStore,
-      1,
-      null,
-      "loading"
-    );
-
-    expect(result).toMatchObject({
-      data: {},
-      state: "loading",
     });
   });
 });

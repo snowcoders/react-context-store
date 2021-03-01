@@ -118,4 +118,39 @@ describe("Context store - object", () => {
     expect(harness.getContextData().data[2]).not.toBe(originalData[2]);
     expect(harness.getContextData().data[3]).toBe(originalData[3]);
   });
+
+  it("creates two items in parallel", async () => {
+    // Work
+    const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
+
+    // Verify
+    let result = harness.getContextData();
+    expect(Object.keys(result.data).length).toEqual(0);
+
+    // Work
+    await Promise.all([
+      result.createOne({
+        id: 0,
+        name: "0",
+      }),
+      result.createOne({
+        id: 1,
+        name: "1",
+      }),
+    ]);
+    await harness.waitForAsyncTasks();
+
+    // Verify
+    result = harness.getContextData();
+    expect(result.data).toEqual({
+      0: {
+        id: 0,
+        name: "0",
+      },
+      1: {
+        id: 1,
+        name: "1",
+      },
+    });
+  });
 });

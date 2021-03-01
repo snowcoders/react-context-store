@@ -1,5 +1,4 @@
-import React, { PropsWithChildren, useEffect, useState } from "react";
-
+import React, { PropsWithChildren } from "react";
 import {
   ContextStore,
   getNotImplementedPromise,
@@ -14,11 +13,12 @@ export type Item = {
 export type ContextValueData = { [id: number]: Item };
 
 export type ReplaceAllParams = ContextValueData;
+export type CreateOneParams = Item;
 export type UpdateOneParams = Partial<Item> & Pick<Item, "id">;
 export interface ContextValue extends ContextStore<ContextValueData> {
   replaceAll: (params: ReplaceAllParams) => Promise<ContextValueData>;
   updateOne: (params: UpdateOneParams) => Promise<Item>;
-  // TODO: add delete and create
+  createOne: (params: CreateOneParams) => Promise<Item>;
 }
 
 const defaultValue: ContextValue = {
@@ -26,6 +26,7 @@ const defaultValue: ContextValue = {
   replaceAll: getNotImplementedPromise,
   state: "unsent",
   updateOne: getNotImplementedPromise,
+  createOne: getNotImplementedPromise,
 };
 
 export const Context = React.createContext(defaultValue);
@@ -55,8 +56,21 @@ export function ApiProvider(props: ProviderProps) {
     },
   });
 
+  const createOne = setContextValue.useCreateOneFactory({
+    action: (params: CreateOneParams) => {
+      return Promise.resolve({
+        ...params,
+      });
+    },
+    getIndex: (params: CreateOneParams) => {
+      return params.id;
+    },
+  });
+
   return (
-    <Context.Provider value={{ ...contextValue, replaceAll, updateOne }}>
+    <Context.Provider
+      value={{ ...contextValue, replaceAll, updateOne, createOne }}
+    >
       {children}
     </Context.Provider>
   );
