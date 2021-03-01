@@ -83,9 +83,11 @@ export async function getUpdateOneContextData<
         );
       }
     } catch (e2) {
-      setContextData({
-        ...contextData,
-        state: statefulStates.error,
+      setContextData((contextData) => {
+        return {
+          ...contextData,
+          state: statefulStates.error,
+        };
       });
       if (typeof e2 === "string") {
         return Promise.reject(e2);
@@ -115,13 +117,23 @@ export async function setContextDataForUpdateOne<
     const index = getIndex(params);
     const value = action ? await action(params) : null;
 
-    const newStore = getUpdatedContextDataForUpdateOne(
-      contextData,
-      index,
-      value,
-      state
-    );
-    setContextData(newStore);
+    const newStore = await new Promise<TContextStore>((resolve, reject) => {
+      setContextData((contextData) => {
+        try {
+          const newStore = getUpdatedContextDataForUpdateOne(
+            contextData,
+            index,
+            value,
+            state
+          );
+          resolve(newStore);
+          return newStore;
+        } catch (e) {
+          reject(e);
+          return contextData;
+        }
+      });
+    });
     const d = newStore.data;
     let a: IndexableStatefulContextStoreValue<TContextStore> =
       // @ts-expect-error

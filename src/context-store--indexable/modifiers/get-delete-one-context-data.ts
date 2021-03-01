@@ -78,9 +78,11 @@ export async function getDeleteOneContextData<
         );
       }
     } catch {
-      setContextData({
-        ...contextData,
-        state: statefulStates.error,
+      setContextData((contextData) => {
+        return {
+          ...contextData,
+          state: statefulStates.error,
+        };
       });
       return Promise.reject(errorMessages.errorCallbackRejected);
     }
@@ -106,13 +108,15 @@ export async function setContextDataForDeleteOne<
   const oldValue = contextData.data[index];
   const defaultValue = deleteIfNull ? null : oldValue;
   const value = action ? await action(params) : defaultValue;
-  const newStore = getUpdatedContextDataForDeleteOne(
-    contextData,
-    index,
-    value,
-    state
-  );
-  setContextData(newStore);
+  setContextData((contextData) => {
+    const newStore = getUpdatedContextDataForDeleteOne(
+      contextData,
+      index,
+      value,
+      state
+    );
+    return newStore;
+  });
   return oldValue;
 }
 

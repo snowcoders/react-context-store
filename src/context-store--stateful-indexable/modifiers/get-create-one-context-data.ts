@@ -69,9 +69,11 @@ export async function getCreateOneContextData<
         error
       );
     } else {
-      setContextData({
-        ...contextData,
-        state: statefulStates.success,
+      setContextData((contextData) => {
+        return {
+          ...contextData,
+          state: statefulStates.success,
+        };
       });
     }
     if (typeof e === "string") {
@@ -98,9 +100,9 @@ export async function setContextDataForCreateOne<
   // Handle preload scenario
   const index = getIndex(params);
   const value = action ? await action(params) : null;
-  setContextData(
-    getUpdatedContextDataForCreateOne(contextData, index, value, state)
-  );
+  setContextData((contextData) => {
+    return getUpdatedContextDataForCreateOne(contextData, index, value, state);
+  });
   return value;
 }
 
