@@ -9,7 +9,7 @@ export async function getUpdateOneContextData<
   Params,
   TContextStore extends IndexableContextStore<any>
 >(
-  contextData: TContextStore,
+  contextDataAtTimeOfExecution: TContextStore,
   setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
   dataHandlers: {
@@ -26,13 +26,20 @@ export async function getUpdateOneContextData<
   }
 ): Promise<IndexableContextStoreValue<TContextStore>> {
   const { action, error, getIndex, preload } = dataHandlers;
+
+  // If the index doesn't exist, nothing to do
+  const index = getIndex(params);
+  const oldData = contextDataAtTimeOfExecution.data[index];
+  if (oldData == null) {
+    return Promise.reject(errorMessages.indexNotFound);
+  }
+
   let value: null | IndexableContextStoreValue<TContextStore> = null;
 
   try {
     // Handle preload
     value =
       (await setContextDataForUpdateOne(
-        contextData,
         setContextData,
         params,
         getIndex,
@@ -43,7 +50,6 @@ export async function getUpdateOneContextData<
     // Handle action
     value =
       (await setContextDataForUpdateOne(
-        contextData,
         setContextData,
         params,
         getIndex,
@@ -51,28 +57,22 @@ export async function getUpdateOneContextData<
         action
       )) ?? value;
 
-    if (value == null) {
-      return Promise.reject(errorMessages.actionReturnedNull);
-    } else {
-      return Promise.resolve(value);
-    }
+    return Promise.resolve(value);
   } catch (e) {
-    if (e.message === errorMessages.indexNotFound) {
-      return Promise.reject(errorMessages.indexNotFound);
-    }
     try {
       value = await setContextDataForUpdateOne(
-        contextData,
         setContextData,
         params,
         getIndex,
         statefulStates.error,
         error
       );
-      if (value == null) {
-        return Promise.reject(errorMessages.indexNotFound);
+      if (typeof e === "string") {
+        return Promise.reject(e);
       } else {
-        return Promise.resolve(value);
+        return Promise.reject(
+          e.message || errorMessages.unknownPreloadOrActionReject
+        );
       }
     } catch {
       setContextData((contextData) => {
@@ -90,7 +90,6 @@ export async function setContextDataForUpdateOne<
   Params,
   TContextStore extends IndexableContextStore<any>
 >(
-  contextData: TContextStore,
   setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
   getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>,
@@ -127,9 +126,6 @@ export function getUpdatedContextDataForUpdateOne<
 ): TContextStore {
   const { data } = store;
   const oldValue: IndexableContextStoreValue<TContextStore> = store.data[index];
-  if (oldValue == null) {
-    throw new Error(errorMessages.indexNotFound);
-  }
   const newValue: IndexableContextStoreValue<TContextStore> = {
     ...oldValue,
     ...value,

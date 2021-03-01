@@ -1,10 +1,8 @@
-import { ContextStoreData } from "../../context-store--basic/interfaces";
 import { errorMessages, Stateful, statefulStates } from "../../shared";
 import {
   IndexableStatefulContextStore,
   IndexableStatefulContextStoreValueData,
   IndexableStatefulContextStoreKey,
-  IndexableStatefulContextStoreValue,
 } from "../interfaces";
 import {
   setContextDataForUpdateOne,
@@ -35,6 +33,14 @@ export async function getDeleteOneContextData<
 ): Promise<IndexableStatefulContextStoreValueData<TContextStore>> {
   const { action, error, getIndex, preload } = dataHandlers;
   let value: null | IndexableStatefulContextStoreValueData<TContextStore> = null;
+
+  // If the index doesn't exist, nothing to do
+  const index = getIndex(params);
+  // @ts-expect-error
+  const oldData = contextData.data[index];
+  if (oldData == null) {
+    return Promise.reject(errorMessages.indexNotFound);
+  }
 
   try {
     // Handle preload
@@ -68,7 +74,6 @@ export async function getDeleteOneContextData<
   } catch (e) {
     try {
       value = await setContextDataForUpdateOne(
-        contextData,
         setContextData,
         params,
         getIndex,
@@ -78,17 +83,18 @@ export async function getDeleteOneContextData<
       if (typeof e === "string") {
         return Promise.reject(e);
       } else {
-        throw e;
+        return Promise.reject(
+          e.message || errorMessages.unknownPreloadOrActionReject
+        );
       }
-    } catch (e2) {
+    } catch {
       await setContextDataForUpdateOne(
-        contextData,
         setContextData,
         params,
         getIndex,
         statefulStates.error
       );
-      return Promise.reject(e2.message || errorMessages.errorCallbackRejected);
+      return Promise.reject(errorMessages.errorCallbackRejected);
     }
   }
 }
@@ -107,49 +113,34 @@ export async function setContextDataForDeleteOne<
   ) => Promise<IndexableStatefulContextStoreValueData<TContextStore> | null>,
   deleteIfNull: boolean = true
 ) {
-  try {
-    // Handle preload scenario
-    const index = getIndex(params);
-    const oldValue: IndexableStatefulContextStoreValueData<TContextStore> =
-      // @ts-expect-error
-      contextData.data[index].data;
-    const defaultValue = deleteIfNull ? null : oldValue;
-    const value = action ? await action(params) : defaultValue;
-    // Handle data updates
-    if (value != null) {
-      const newStore = await new Promise<TContextStore>((resolve, reject) => {
-        setContextData((contextData) => {
-          try {
-            const newStore = getUpdatedContextDataForUpdateOne(
-              contextData,
-              index,
-              value,
-              state
-            );
-            resolve(newStore);
-            return newStore;
-          } catch (e) {
-            reject(e);
-            return contextData;
-          }
-        });
-      });
-      // @ts-expect-error
-      return newStore.data[index].data;
-    } else {
+  const index = getIndex(params);
+  const oldValue: IndexableStatefulContextStoreValueData<TContextStore> =
+    // @ts-expect-error
+    contextData.data[index].data;
+  const defaultValue = deleteIfNull ? null : oldValue;
+  const value = action ? await action(params) : defaultValue;
+  // Handle data updates
+  if (value != null) {
+    const newStore = await new Promise<TContextStore>((resolve) => {
       setContextData((contextData) => {
-        const newStore = getUpdatedContextDataForDeleteOne(contextData, index);
+        const newStore = getUpdatedContextDataForUpdateOne(
+          contextData,
+          index,
+          value,
+          state
+        );
+        resolve(newStore);
         return newStore;
       });
-      return oldValue;
-    }
-  } catch (e) {
-    if (typeof e === "string") {
-      return Promise.reject(e);
-    }
-    return Promise.reject(
-      e?.message || errorMessages.unknownPreloadOrActionReject
-    );
+    });
+    // @ts-expect-error
+    return newStore.data[index].data;
+  } else {
+    setContextData((contextData) => {
+      const newStore = getUpdatedContextDataForDeleteOne(contextData, index);
+      return newStore;
+    });
+    return oldValue;
   }
 }
 

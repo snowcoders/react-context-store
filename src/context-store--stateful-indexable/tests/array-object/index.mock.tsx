@@ -2,7 +2,6 @@ import React, { PropsWithChildren } from "react";
 
 import {
   ContextStore,
-  IndexableStatefulContextStore,
   getNotImplementedPromise,
   useIndexableStatefulContextStore,
 } from "../../../index";

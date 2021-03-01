@@ -218,7 +218,6 @@ describe(getTestName(__dirname), () => {
         return func(statefulIndexStore);
       });
       const result = await setContextDataForUpdateOne(
-        statefulIndexStore,
         setContextData,
         {
           name: "name 1",

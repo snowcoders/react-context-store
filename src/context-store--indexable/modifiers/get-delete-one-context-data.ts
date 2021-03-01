@@ -11,7 +11,7 @@ export async function getDeleteOneContextData<
   Params,
   TContextStore extends IndexableContextStore<any>
 >(
-  contextData: TContextStore,
+  contextDataAtTimeOfExecution: TContextStore,
   setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
   dataHandlers: {
@@ -26,41 +26,39 @@ export async function getDeleteOneContextData<
   }
 ): Promise<IndexableContextStoreValue<TContextStore>> {
   const { action, error, getIndex, preload } = dataHandlers;
-  let value: null | IndexableContextStoreValue<TContextStore> = null;
+
+  // If the index doesn't exist, nothing to do
+  const index = getIndex(params);
+  const oldData = contextDataAtTimeOfExecution.data[index];
+  if (oldData == null) {
+    return Promise.reject(errorMessages.indexNotFound);
+  }
 
   try {
     // Handle preload
-    value =
-      (await setContextDataForDeleteOne(
-        contextData,
-        setContextData,
-        params,
-        getIndex,
-        statefulStates.loading,
-        preload,
-        false
-      )) ?? value;
+    await setContextDataForDeleteOne(
+      setContextData,
+      params,
+      getIndex,
+      statefulStates.loading,
+      preload,
+      false
+    );
 
     // Handle action
-    value =
-      (await setContextDataForDeleteOne(
-        contextData,
-        setContextData,
-        params,
-        getIndex,
-        statefulStates.success,
-        action
-      )) ?? value;
+    await setContextDataForDeleteOne(
+      setContextData,
+      params,
+      getIndex,
+      statefulStates.success,
+      action,
+      true
+    );
 
-    if (value == null) {
-      return Promise.reject(errorMessages.indexNotFound);
-    } else {
-      return Promise.resolve(value);
-    }
+    return Promise.resolve(oldData);
   } catch (e) {
     try {
-      value = await setContextDataForDeleteOne(
-        contextData,
+      await setContextDataForDeleteOne(
         setContextData,
         params,
         getIndex,
@@ -68,9 +66,7 @@ export async function getDeleteOneContextData<
         error,
         false
       );
-      if (value == null) {
-        return Promise.reject(errorMessages.indexNotFound);
-      } else if (typeof e === "string") {
+      if (typeof e === "string") {
         return Promise.reject(e);
       } else {
         return Promise.reject(
@@ -89,11 +85,10 @@ export async function getDeleteOneContextData<
   }
 }
 
-export async function setContextDataForDeleteOne<
+async function setContextDataForDeleteOne<
   Params,
   TContextStore extends IndexableContextStore<unknown>
 >(
-  contextData: TContextStore,
   setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
   getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>,
@@ -101,14 +96,20 @@ export async function setContextDataForDeleteOne<
   action?: (
     params: Params
   ) => Promise<IndexableContextStoreValue<TContextStore> | null>,
-  deleteIfNull: boolean = true
+  deleteIfActionUndefined: boolean = true
 ) {
   // Handle preload scenario
   const index = getIndex(params);
-  const oldValue = contextData.data[index];
-  const defaultValue = deleteIfNull ? null : oldValue;
-  const value = action ? await action(params) : defaultValue;
+  const newValue = action ? await action(params) : null;
+
   setContextData((contextData) => {
+    const oldValue = contextData.data[index];
+    let value = newValue;
+    if (action == null) {
+      value = deleteIfActionUndefined ? null : oldValue;
+    } else {
+      value = newValue ?? null;
+    }
     const newStore = getUpdatedContextDataForDeleteOne(
       contextData,
       index,
@@ -117,10 +118,9 @@ export async function setContextDataForDeleteOne<
     );
     return newStore;
   });
-  return oldValue;
 }
 
-export function getUpdatedContextDataForDeleteOne<
+function getUpdatedContextDataForDeleteOne<
   TContextStore extends IndexableContextStore<unknown>
 >(
   store: TContextStore,

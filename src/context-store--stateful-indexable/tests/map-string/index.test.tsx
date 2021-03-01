@@ -124,6 +124,41 @@ describe("createOne", () => {
     expect(Object.keys(result.data).length).toBe(1);
     expect(result.data["a"]).toEqual(toContextStore(newEntry));
   });
+
+  it("creates two items in parallel", async () => {
+    // Work
+    const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
+
+    // Verify
+    let result = harness.getContextData();
+    expect(Object.keys(result.data).length).toEqual(0);
+
+    // Work
+    await Promise.all([
+      result.createOne({
+        id: "0",
+        name: "0",
+      }),
+      result.createOne({
+        id: "1",
+        name: "1",
+      }),
+    ]);
+    await harness.waitForAsyncTasks();
+
+    // Verify
+    result = harness.getContextData();
+    expect(result.data).toEqual({
+      0: {
+        data: { id: "0", name: "0" },
+        state: "success",
+      },
+      1: {
+        data: { id: "1", name: "1" },
+        state: "success",
+      },
+    });
+  });
 });
 
 describe("updateOne", () => {

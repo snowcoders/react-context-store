@@ -9,7 +9,7 @@ export async function getCreateOneContextData<
   Params,
   TContextStore extends IndexableContextStore<any>
 >(
-  contextData: TContextStore,
+  contextDataAtTimeOfExecution: TContextStore,
   setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
   dataHandlers: {
@@ -49,21 +49,27 @@ export async function getCreateOneContextData<
         action
       )) ?? value;
 
-    if (value == null) {
-      return Promise.reject(errorMessages.actionReturnedNull);
-    } else {
-      return Promise.resolve(value);
-    }
+    return Promise.resolve(value);
   } catch (e) {
     try {
       // Creation failed, let's try to clean up but only if
       // we created a value in the first place
-      setContextData((contextData) => {
-        return {
-          ...contextData,
-          state: statefulStates.error,
-        };
-      });
+      if (error) {
+        await setContextDataForCreateOne(
+          setContextData,
+          params,
+          getIndex,
+          statefulStates.error,
+          error
+        );
+      } else {
+        setContextData((contextData) => {
+          return {
+            ...contextData,
+            state: statefulStates.error,
+          };
+        });
+      }
       if (typeof e === "string") {
         return Promise.reject(e);
       } else {

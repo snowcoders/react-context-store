@@ -37,11 +37,18 @@ export async function getUpdateOneContextData<
   const { action, error, getIndex, preload } = dataHandlers;
   let value: null | IndexableStatefulContextStoreValueData<TContextStore> = null;
 
+  // If the index doesn't exist, nothing to do
+  const index = getIndex(params);
+  // @ts-expect-error
+  const oldData = contextData.data[index];
+  if (oldData == null) {
+    return Promise.reject(errorMessages.indexNotFound);
+  }
+
   try {
     // Handle preload
     value =
       (await setContextDataForUpdateOne(
-        contextData,
         setContextData,
         params,
         getIndex,
@@ -52,7 +59,6 @@ export async function getUpdateOneContextData<
     // Handle action
     value =
       (await setContextDataForUpdateOne(
-        contextData,
         setContextData,
         params,
         getIndex,
@@ -65,33 +71,29 @@ export async function getUpdateOneContextData<
     } else {
       return Promise.resolve(value);
     }
-  } catch (e1) {
+  } catch (e) {
     try {
       value = await setContextDataForUpdateOne(
-        contextData,
         setContextData,
         params,
         getIndex,
         statefulStates.error,
         error
       );
-      if (typeof e1 === "string") {
-        return Promise.reject(e1);
+      if (typeof e === "string") {
+        return Promise.reject(e);
       } else {
         return Promise.reject(
-          e1.message || errorMessages.unknownPreloadOrActionReject
+          e.message || errorMessages.unknownPreloadOrActionReject
         );
       }
-    } catch (e2) {
+    } catch {
       setContextData((contextData) => {
         return {
           ...contextData,
           state: statefulStates.error,
         };
       });
-      if (typeof e2 === "string") {
-        return Promise.reject(e2);
-      }
       return Promise.reject(errorMessages.unknownPreloadOrActionReject);
     }
   }
@@ -101,7 +103,6 @@ export async function setContextDataForUpdateOne<
   Params,
   TContextStore extends IndexableStatefulContextStore<unknown>
 >(
-  contextData: TContextStore,
   setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
   getIndex: (params: Params) => IndexableStatefulContextStoreKey<TContextStore>,
@@ -112,38 +113,27 @@ export async function setContextDataForUpdateOne<
     IndexableStatefulContextStoreValueData<TContextStore>
   > | null>
 ) {
-  try {
-    // Handle preload scenario
-    const index = getIndex(params);
-    const value = action ? await action(params) : null;
+  // Handle preload scenario
+  const index = getIndex(params);
+  const value = action ? await action(params) : null;
 
-    const newStore = await new Promise<TContextStore>((resolve, reject) => {
-      setContextData((contextData) => {
-        try {
-          const newStore = getUpdatedContextDataForUpdateOne(
-            contextData,
-            index,
-            value,
-            state
-          );
-          resolve(newStore);
-          return newStore;
-        } catch (e) {
-          reject(e);
-          return contextData;
-        }
-      });
+  const newStore = await new Promise<TContextStore>((resolve) => {
+    setContextData((contextData) => {
+      const newStore = getUpdatedContextDataForUpdateOne(
+        contextData,
+        index,
+        value,
+        state
+      );
+      resolve(newStore);
+      return newStore;
     });
-    const d = newStore.data;
-    let a: IndexableStatefulContextStoreValue<TContextStore> =
-      // @ts-expect-error
-      d[index];
-    return a.data;
-  } catch (e) {
-    return Promise.reject(
-      e?.message || errorMessages.unknownPreloadOrActionReject
-    );
-  }
+  });
+  const d = newStore.data;
+  let a: IndexableStatefulContextStoreValue<TContextStore> =
+    // @ts-expect-error
+    d[index];
+  return a.data;
 }
 
 export function getUpdatedContextDataForUpdateOne<
@@ -158,9 +148,6 @@ export function getUpdatedContextDataForUpdateOne<
   const oldValue: IndexableStatefulContextStoreValue<TContextStore> =
     // @ts-expect-error
     data[index];
-  if (oldValue == null) {
-    throw new Error(errorMessages.indexNotFound);
-  }
   const newValue: typeof oldValue = {
     data: {
       // @ts-expect-error - TODO: Actually look into this, I think primitives might be broken
