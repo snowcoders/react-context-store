@@ -19,7 +19,6 @@ describe(getTestName(__dirname), () => {
   describe("Reactive delete", () => {
     describe("action resolves", () => {
       it("Deletes item (setting states) and returns expected result", async () => {
-        const setContextData = jest.fn();
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
@@ -29,6 +28,9 @@ describe(getTestName(__dirname), () => {
           },
           state: "success",
         };
+        const setContextData = jest.fn((func) => {
+          return func(statefulIndexStore);
+        });
         const result = await getDeleteOneContextData(
           statefulIndexStore,
           setContextData,
@@ -51,7 +53,7 @@ describe(getTestName(__dirname), () => {
 
         expect(setContextData).toHaveBeenCalledTimes(2);
         // Expect setContextData to have been called first with loading
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           1,
           expect.objectContaining({
             data: {
@@ -64,7 +66,7 @@ describe(getTestName(__dirname), () => {
           })
         );
 
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           2,
           expect.objectContaining({
             data: {},
@@ -74,7 +76,6 @@ describe(getTestName(__dirname), () => {
       });
 
       it("Updates item via preload, deletes item (setting states), and returns expected result", async () => {
-        const setContextData = jest.fn();
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
@@ -84,6 +85,9 @@ describe(getTestName(__dirname), () => {
           },
           state: "success",
         };
+        const setContextData = jest.fn((func) => {
+          return func(statefulIndexStore);
+        });
         const result = await getDeleteOneContextData(
           statefulIndexStore,
           setContextData,
@@ -111,7 +115,7 @@ describe(getTestName(__dirname), () => {
 
         expect(setContextData).toHaveBeenCalledTimes(2);
         // Expect setContextData to have been called first with loading
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           1,
           expect.objectContaining({
             data: {
@@ -124,7 +128,7 @@ describe(getTestName(__dirname), () => {
           })
         );
 
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           2,
           expect.objectContaining({
             data: {},
@@ -137,7 +141,7 @@ describe(getTestName(__dirname), () => {
     describe("action rejects", () => {
       it("rejects request and updates state to loading then error", async () => {
         const rejectErrorMessage = "Test reject error message";
-        const setContextData = jest.fn();
+
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
@@ -147,6 +151,9 @@ describe(getTestName(__dirname), () => {
           },
           state: "success",
         };
+        const setContextData = jest.fn((func) => {
+          return func(statefulIndexStore);
+        });
         await expect(
           getDeleteOneContextData(
             statefulIndexStore,
@@ -165,7 +172,7 @@ describe(getTestName(__dirname), () => {
 
         expect(setContextData).toHaveBeenCalledTimes(2);
         // Expect setContextData to have been called first with loading
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           1,
           expect.objectContaining({
             data: {
@@ -178,7 +185,7 @@ describe(getTestName(__dirname), () => {
           })
         );
         // Expect setContextData to have been last called with error
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           2,
           expect.objectContaining({
             data: {
@@ -194,7 +201,7 @@ describe(getTestName(__dirname), () => {
 
       it("rejects request and updates state to loading then custom error", async () => {
         const rejectErrorMessage = "Test reject error message";
-        const setContextData = jest.fn();
+
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
@@ -204,6 +211,9 @@ describe(getTestName(__dirname), () => {
           },
           state: "success",
         };
+        const setContextData = jest.fn((func) => {
+          return func(statefulIndexStore);
+        });
         await expect(
           getDeleteOneContextData(
             statefulIndexStore,
@@ -228,7 +238,7 @@ describe(getTestName(__dirname), () => {
 
         expect(setContextData).toHaveBeenCalledTimes(2);
         // Expect setContextData to have been called first with loading
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           1,
           expect.objectContaining({
             data: {
@@ -241,7 +251,7 @@ describe(getTestName(__dirname), () => {
           })
         );
         // Expect setContextData to have been last called with error
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           2,
           expect.objectContaining({
             data: {
@@ -256,7 +266,6 @@ describe(getTestName(__dirname), () => {
       });
 
       it("Throws error if reject happens in error handler", async () => {
-        const setContextData = jest.fn();
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
@@ -266,6 +275,9 @@ describe(getTestName(__dirname), () => {
           },
           state: "success",
         };
+        const setContextData = jest.fn((func) => {
+          return func(statefulIndexStore);
+        });
         return expect(
           getDeleteOneContextData(
             statefulIndexStore,
@@ -290,7 +302,7 @@ describe(getTestName(__dirname), () => {
     describe("action throws", () => {
       it("rejects request and updates state to loading then error", async () => {
         const rejectErrorMessage = "Test reject error message";
-        const setContextData = jest.fn();
+
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
@@ -300,6 +312,9 @@ describe(getTestName(__dirname), () => {
           },
           state: "success",
         };
+        const setContextData = jest.fn((func) => {
+          return func(statefulIndexStore);
+        });
         await expect(
           getDeleteOneContextData(
             statefulIndexStore,
@@ -318,7 +333,7 @@ describe(getTestName(__dirname), () => {
 
         expect(setContextData).toHaveBeenCalledTimes(2);
         // Expect setContextData to have been called first with loading
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           1,
           expect.objectContaining({
             data: {
@@ -331,7 +346,7 @@ describe(getTestName(__dirname), () => {
           })
         );
         // Expect setContextData to have been last called with error
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           2,
           expect.objectContaining({
             data: {
@@ -347,7 +362,7 @@ describe(getTestName(__dirname), () => {
 
       it("rejects request and updates state to loading then custom error", async () => {
         const rejectErrorMessage = "Test reject error message";
-        const setContextData = jest.fn();
+
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
@@ -357,6 +372,9 @@ describe(getTestName(__dirname), () => {
           },
           state: "success",
         };
+        const setContextData = jest.fn((func) => {
+          return func(statefulIndexStore);
+        });
         await expect(
           getDeleteOneContextData(
             statefulIndexStore,
@@ -381,7 +399,7 @@ describe(getTestName(__dirname), () => {
 
         expect(setContextData).toHaveBeenCalledTimes(2);
         // Expect setContextData to have been called first with loading
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           1,
           expect.objectContaining({
             data: {
@@ -394,7 +412,7 @@ describe(getTestName(__dirname), () => {
           })
         );
         // Expect setContextData to have been last called with error
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           2,
           expect.objectContaining({
             data: {
@@ -409,7 +427,6 @@ describe(getTestName(__dirname), () => {
       });
 
       it("Throws error if reject happens in error handler", async () => {
-        const setContextData = jest.fn();
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
@@ -419,6 +436,9 @@ describe(getTestName(__dirname), () => {
           },
           state: "success",
         };
+        const setContextData = jest.fn((func) => {
+          return func(statefulIndexStore);
+        });
         await expect(
           getDeleteOneContextData(
             statefulIndexStore,
@@ -440,7 +460,7 @@ describe(getTestName(__dirname), () => {
 
         expect(setContextData).toHaveBeenCalledTimes(2);
         // Expect setContextData to have been called first with loading
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           1,
           expect.objectContaining({
             data: {
@@ -453,7 +473,7 @@ describe(getTestName(__dirname), () => {
           })
         );
         // Expect setContextData to have been last called with error
-        expect(setContextData).toHaveBeenNthCalledWith(
+        expect(setContextData).toHaveNthReturnedWith(
           2,
           expect.objectContaining({
             data: {
@@ -471,7 +491,6 @@ describe(getTestName(__dirname), () => {
 
   describe("Pre-emptive", () => {
     it("Removes data pre-emptively if preload resolves null", async () => {
-      const setContextData = jest.fn();
       const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
@@ -481,6 +500,9 @@ describe(getTestName(__dirname), () => {
         },
         state: "success",
       };
+      const setContextData = jest.fn((func) => {
+        return func(statefulIndexStore);
+      });
       const result = await getDeleteOneContextData(
         statefulIndexStore,
         setContextData,
@@ -504,7 +526,7 @@ describe(getTestName(__dirname), () => {
         name: "name 0",
       });
       // Expect setContextData to have been called first with loading
-      expect(setContextData).toHaveBeenNthCalledWith(
+      expect(setContextData).toHaveNthReturnedWith(
         1,
         expect.objectContaining({
           data: {},
@@ -512,7 +534,7 @@ describe(getTestName(__dirname), () => {
         })
       );
       // Expect setContextData to have been called first with then success
-      expect(setContextData).toHaveBeenNthCalledWith(
+      expect(setContextData).toHaveNthReturnedWith(
         2,
         expect.objectContaining({
           data: {},
@@ -523,7 +545,6 @@ describe(getTestName(__dirname), () => {
   });
 
   it("Deletes an entry when action is defined", async () => {
-    const setContextData = jest.fn();
     const statefulIndexStore: UserMapContextStore = {
       data: {
         0: {
@@ -533,6 +554,9 @@ describe(getTestName(__dirname), () => {
       },
       state: "success",
     };
+    const setContextData = jest.fn((func) => {
+      return func(statefulIndexStore);
+    });
     const result = await setContextDataForDeleteOne(
       statefulIndexStore,
       setContextData,
@@ -552,7 +576,8 @@ describe(getTestName(__dirname), () => {
       name: "name 0",
     });
     // Expect setContextData to have been set with the new store information
-    expect(setContextData).toHaveBeenCalledWith(
+    expect(setContextData).toHaveNthReturnedWith(
+      1,
       expect.objectContaining({
         data: {},
         state: "loading",

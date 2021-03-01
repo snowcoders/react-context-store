@@ -32,7 +32,6 @@ export async function getCreateOneContextData<
     // Handle preload
     value =
       (await setContextDataForCreateOne(
-        contextData,
         setContextData,
         params,
         getIndex,
@@ -43,7 +42,6 @@ export async function getCreateOneContextData<
     // Handle action
     value =
       (await setContextDataForCreateOne(
-        contextData,
         setContextData,
         params,
         getIndex,
@@ -60,9 +58,11 @@ export async function getCreateOneContextData<
     try {
       // Creation failed, let's try to clean up but only if
       // we created a value in the first place
-      setContextData({
-        ...contextData,
-        state: statefulStates.error,
+      setContextData((contextData) => {
+        return {
+          ...contextData,
+          state: statefulStates.error,
+        };
       });
       if (typeof e === "string") {
         return Promise.reject(e);
@@ -72,9 +72,11 @@ export async function getCreateOneContextData<
         );
       }
     } catch {
-      setContextData({
-        ...contextData,
-        state: statefulStates.error,
+      setContextData((contextData) => {
+        return {
+          ...contextData,
+          state: statefulStates.error,
+        };
       });
       return Promise.reject(errorMessages.errorCallbackRejected);
     }
@@ -85,7 +87,6 @@ export async function setContextDataForCreateOne<
   Params,
   TContextStore extends IndexableContextStore<any>
 >(
-  contextData: TContextStore,
   setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
   getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>,
@@ -97,9 +98,9 @@ export async function setContextDataForCreateOne<
   // Handle preload scenario
   const index = getIndex(params);
   const value = action ? await action(params) : null;
-  setContextData(
-    getUpdatedContextDataForCreateOne(contextData, index, value, state)
-  );
+  setContextData((contextData) => {
+    return getUpdatedContextDataForCreateOne(contextData, index, value, state);
+  });
   return value;
 }
 

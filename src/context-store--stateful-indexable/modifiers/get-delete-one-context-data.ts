@@ -117,18 +117,30 @@ export async function setContextDataForDeleteOne<
     const value = action ? await action(params) : defaultValue;
     // Handle data updates
     if (value != null) {
-      const newStore = getUpdatedContextDataForUpdateOne(
-        contextData,
-        index,
-        value,
-        state
-      );
-      setContextData(newStore);
+      const newStore = await new Promise<TContextStore>((resolve, reject) => {
+        setContextData((contextData) => {
+          try {
+            const newStore = getUpdatedContextDataForUpdateOne(
+              contextData,
+              index,
+              value,
+              state
+            );
+            resolve(newStore);
+            return newStore;
+          } catch (e) {
+            reject(e);
+            return contextData;
+          }
+        });
+      });
       // @ts-expect-error
       return newStore.data[index].data;
     } else {
-      const newStore = getUpdatedContextDataForDeleteOne(contextData, index);
-      setContextData(newStore);
+      setContextData((contextData) => {
+        const newStore = getUpdatedContextDataForDeleteOne(contextData, index);
+        return newStore;
+      });
       return oldValue;
     }
   } catch (e) {

@@ -75,9 +75,11 @@ export async function getUpdateOneContextData<
         return Promise.resolve(value);
       }
     } catch {
-      setContextData({
-        ...contextData,
-        state: statefulStates.error,
+      setContextData((contextData) => {
+        return {
+          ...contextData,
+          state: statefulStates.error,
+        };
       });
       return Promise.reject(errorMessages.errorCallbackRejected);
     }
@@ -96,19 +98,23 @@ export async function setContextDataForUpdateOne<
   action?: (
     params: Params
   ) => Promise<Partial<IndexableContextStoreValue<TContextStore>> | null>
-) {
+): Promise<IndexableContextStoreValue<TContextStore>> {
   // Handle preload scenario
   const index = getIndex(params);
   const value = action ? await action(params) : null;
 
-  const newStore = getUpdatedContextDataForUpdateOne(
-    contextData,
-    index,
-    value,
-    state
-  );
-  setContextData(newStore);
-  return newStore.data[index];
+  return new Promise((resolve) => {
+    setContextData((contextData) => {
+      const newStore = getUpdatedContextDataForUpdateOne(
+        contextData,
+        index,
+        value,
+        state
+      );
+      resolve(newStore.data[index]);
+      return newStore;
+    });
+  });
 }
 
 export function getUpdatedContextDataForUpdateOne<

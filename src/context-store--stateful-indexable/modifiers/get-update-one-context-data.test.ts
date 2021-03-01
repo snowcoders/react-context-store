@@ -18,7 +18,6 @@ type UserMapContextStore = ContextStore<{
 describe(getTestName(__dirname), () => {
   describe("getUpdateOneContextData", () => {
     it("Updates an entry when only action is defined", async () => {
-      const setContextData = jest.fn();
       const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
@@ -31,6 +30,9 @@ describe(getTestName(__dirname), () => {
         },
         state: "success",
       };
+      const setContextData = jest.fn((func) => {
+        return func(statefulIndexStore);
+      });
       const result = await getUpdateOneContextData(
         statefulIndexStore,
         setContextData,
@@ -53,7 +55,7 @@ describe(getTestName(__dirname), () => {
         name: "name 1",
       });
       // Expect setContextData to have been called first with loading
-      expect(setContextData).toHaveBeenNthCalledWith(
+      expect(setContextData).toHaveNthReturnedWith(
         1,
         expect.objectContaining({
           data: {
@@ -69,7 +71,7 @@ describe(getTestName(__dirname), () => {
         })
       );
       // Expect setContextData to have been called first with then success
-      expect(setContextData).toHaveBeenNthCalledWith(
+      expect(setContextData).toHaveNthReturnedWith(
         2,
         expect.objectContaining({
           data: {
@@ -87,7 +89,6 @@ describe(getTestName(__dirname), () => {
     });
 
     it("Updates an entry when preload", async () => {
-      const setContextData = jest.fn();
       const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
@@ -100,6 +101,9 @@ describe(getTestName(__dirname), () => {
         },
         state: "success",
       };
+      const setContextData = jest.fn((func) => {
+        return func(statefulIndexStore);
+      });
       const result = await getUpdateOneContextData(
         statefulIndexStore,
         setContextData,
@@ -127,7 +131,7 @@ describe(getTestName(__dirname), () => {
         name: "New name 2",
       });
       // Expect setContextData to have been called first with loading
-      expect(setContextData).toHaveBeenNthCalledWith(
+      expect(setContextData).toHaveNthReturnedWith(
         1,
         expect.objectContaining({
           data: {
@@ -143,7 +147,7 @@ describe(getTestName(__dirname), () => {
         })
       );
       // Expect setContextData to have been called first with then success
-      expect(setContextData).toHaveBeenNthCalledWith(
+      expect(setContextData).toHaveNthReturnedWith(
         2,
         expect.objectContaining({
           data: {
@@ -161,7 +165,6 @@ describe(getTestName(__dirname), () => {
     });
 
     it("Rejects when index cannot be found", async () => {
-      const setContextData = jest.fn();
       const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
@@ -174,6 +177,9 @@ describe(getTestName(__dirname), () => {
         },
         state: "success",
       };
+      const setContextData = jest.fn((func) => {
+        return func(statefulIndexStore);
+      });
       await expect(
         getUpdateOneContextData(
           statefulIndexStore,
@@ -196,7 +202,6 @@ describe(getTestName(__dirname), () => {
 
   describe("setContextDataForUpdateOne", () => {
     it("Updates an existing entry when action is defined", async () => {
-      const setContextData = jest.fn();
       const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
@@ -209,6 +214,9 @@ describe(getTestName(__dirname), () => {
         },
         state: "success",
       };
+      const setContextData = jest.fn((func) => {
+        return func(statefulIndexStore);
+      });
       const result = await setContextDataForUpdateOne(
         statefulIndexStore,
         setContextData,
@@ -228,7 +236,8 @@ describe(getTestName(__dirname), () => {
         name: "name 1",
       });
       // Expect setContextData to have been set with the new store information
-      expect(setContextData).toHaveBeenCalledWith(
+      expect(setContextData).toHaveNthReturnedWith(
+        1,
         expect.objectContaining({
           data: {
             0: {
