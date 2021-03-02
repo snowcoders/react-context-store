@@ -58,7 +58,7 @@ describe("replaceAll", () => {
 });
 
 describe("updateOne", () => {
-  it("only updates one value with updateOne", async () => {
+  it("only updates one value", async () => {
     // Setup
     const originalData: Array<Item> = [
       {
@@ -94,6 +94,60 @@ describe("updateOne", () => {
     expect(result.data[0]).toBe(originalData[0]);
     expect(result.data[1]).not.toBe(originalData[1]);
     expect(result.data[2]).toBe(originalData[2]);
+  });
+
+  it("updates two values simultaneously", async () => {
+    // Setup
+    const originalData: Array<Item> = [
+      {
+        id: 1,
+        name: "Name 1",
+      },
+      {
+        id: 2,
+        name: "Name 2",
+      },
+      {
+        id: 3,
+        name: "Name 3",
+      },
+    ];
+    const harness = new ShallowContextHarness(ApiProvider, Context.Consumer);
+    let result = harness.getContextData();
+    await result.replaceAll(originalData);
+    await harness.waitForAsyncTasks();
+    result = harness.getContextData();
+    expect(result.data.length).toBe(3);
+
+    // Work
+    await Promise.all([
+      result.updateOne({
+        ...originalData[1],
+        name: "New name 2",
+      }),
+      result.updateOne({
+        ...originalData[2],
+        name: "New name 3",
+      }),
+    ]);
+    await harness.waitForAsyncTasks();
+
+    // Verify
+    result = harness.getContextData();
+    expect(result.data).toMatchObject([
+      {
+        id: 1,
+        name: "Name 1",
+      },
+      {
+        id: 2,
+        name: "New name 2",
+      },
+      {
+        id: 3,
+        name: "New name 3",
+      },
+    ]);
   });
 });
 
