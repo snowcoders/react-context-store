@@ -3,7 +3,7 @@
   "description": "A two way binding solution that uses React context as a storage mechanism.",
   "devDependencies": {
     "@snowcoders/renovate-config": "2.0.3",
-    "@snowcoders/sortier": "3.2.1",
+    "@snowcoders/sortier": "3.3.0",
     "@types/enzyme": "3.10.8",
     "@types/enzyme-adapter-react-16": "1.0.6",
     "@types/jest": "26.0.23",
