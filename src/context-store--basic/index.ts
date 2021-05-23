@@ -10,11 +10,14 @@ export function useContextStore<TContextStore extends ContextStore<any>>(
 ) {
   const [contextData, setContextData] = useState(defaultValue);
 
-  const useUpdateFactory = <Params = void>(dataHandlers: {
-    action?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
-    error?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
-    preload?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
-  }) => {
+  const useUpdateFactory = <Params = void>(
+    dataHandlers: {
+      action?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
+      error?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
+      preload?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
+    },
+    deps: React.DependencyList = []
+  ) => {
     return useCallback(
       async (params: Params) => {
         return await getReplaceContextData(
@@ -24,7 +27,7 @@ export function useContextStore<TContextStore extends ContextStore<any>>(
           dataHandlers
         );
       },
-      [contextData, setContextData]
+      [contextData, setContextData, ...deps]
     );
   };
 
