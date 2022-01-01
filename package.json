@@ -4,7 +4,7 @@
   "devDependencies": {
     "@snowcoders/renovate-config": "2.0.3",
     "@snowcoders/sortier": "3.3.0",
-    "@types/enzyme": "3.10.10",
+    "@types/enzyme": "3.10.11",
     "@types/enzyme-adapter-react-16": "1.0.6",
     "@types/jest": "27.4.0",
     "@types/react": "17.0.17",
