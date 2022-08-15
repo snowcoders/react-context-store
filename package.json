@@ -6,7 +6,7 @@
     "@snowcoders/sortier": "3.3.0",
     "@types/enzyme": "3.10.12",
     "@types/enzyme-adapter-react-16": "1.0.6",
-    "@types/jest": "28.1.6",
+    "@types/jest": "28.1.7",
     "@types/react": "18.0.15",
     "@types/react-dom": "18.0.6",
     "changelog-updater": "2.0.2",
