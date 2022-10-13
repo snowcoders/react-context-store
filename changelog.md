@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2022-10-13
+
+- Fixed peer dependencies to include everything greater than 16
+
 ## [1.1.0] - 2021-05-24
 
 - Added `deps` argument to all modifiers to mimic useMemo or useCallback deps argument
