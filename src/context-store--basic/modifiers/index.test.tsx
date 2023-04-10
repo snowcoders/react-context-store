@@ -1,3 +1,4 @@
+import { describe, expect, it, jest } from "@jest/globals";
 import { errorMessages } from "../../shared";
 import { getReplaceContextData } from "./index";
 
@@ -20,9 +21,13 @@ describe("getReplaceContextData", () => {
     ).resolves.toMatchObject(data);
 
     expect(spy).toHaveBeenCalledTimes(2);
+    // @ts-ignore: TODO fix typings before next release
     expect(spy.mock.calls[0][0].data).toBe(data);
+    // @ts-ignore: TODO fix typings before next release
     expect(spy.mock.calls[0][0].state).toBe("loading");
+    // @ts-ignore: TODO fix typings before next release
     expect(spy.mock.calls[1][0].data).toBe(data);
+    // @ts-ignore: TODO fix typings before next release
     expect(spy.mock.calls[1][0].state).toBe("success");
   });
 
@@ -50,7 +55,9 @@ describe("getReplaceContextData", () => {
       ).rejects.toEqual(rejectMessage);
 
       expect(spy).toHaveBeenCalledTimes(1);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[0][0].data).toBe(data);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[0][0].state).toBe("error");
     });
 
@@ -77,9 +84,13 @@ describe("getReplaceContextData", () => {
       ).rejects.toEqual(rejectMessage);
 
       expect(spy).toHaveBeenCalledTimes(2);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[0][0].data).toBe(data);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[0][0].state).toBe("loading");
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[1][0].data).toBe(data);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[1][0].state).toBe("error");
     });
 
@@ -109,9 +120,13 @@ describe("getReplaceContextData", () => {
       ).rejects.toEqual(errorMessages.errorCallbackRejected);
 
       expect(spy).toHaveBeenCalledTimes(2);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[0][0].data).toBe(data);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[0][0].state).toBe("loading");
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[1][0].data).toBe(data);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[1][0].state).toBe("error");
     });
   });
@@ -140,7 +155,9 @@ describe("getReplaceContextData", () => {
       ).rejects.toEqual(rejectMessage);
 
       expect(spy).toHaveBeenCalledTimes(1);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[0][0].data).toBe(data);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[0][0].state).toBe("error");
     });
 
@@ -167,9 +184,13 @@ describe("getReplaceContextData", () => {
       ).rejects.toEqual(rejectMessage);
 
       expect(spy).toHaveBeenCalledTimes(2);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[0][0].data).toBe(data);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[0][0].state).toBe("loading");
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[1][0].data).toBe(data);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[1][0].state).toBe("error");
     });
 
@@ -199,9 +220,13 @@ describe("getReplaceContextData", () => {
       ).rejects.toEqual(errorMessages.errorCallbackRejected);
 
       expect(spy).toHaveBeenCalledTimes(2);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[0][0].data).toBe(data);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[0][0].state).toBe("loading");
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[1][0].data).toBe(data);
+      // @ts-ignore: TODO fix typings before next release
       expect(spy.mock.calls[1][0].state).toBe("error");
     });
   });

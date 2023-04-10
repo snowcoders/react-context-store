@@ -1,11 +1,6 @@
-import { configure } from "enzyme";
-import Adapter from "enzyme-adapter-react-16";
+import { beforeEach, describe, it, jest } from "@jest/globals";
 import { ShallowContextHarness } from "../../../test-utils/harness";
 import { ApiProvider, Context, ContextValueData } from "./index.mock";
-
-configure({
-  adapter: new Adapter(),
-});
 
 describe("Context store - object", () => {
   it("completely rewrites all data with replace all", async () => {

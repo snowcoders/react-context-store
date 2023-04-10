@@ -1,3 +1,4 @@
+import { beforeEach, describe, it, jest } from "@jest/globals";
 import { ContextStore } from "../../context-store--basic";
 import { errorMessages } from "../../shared";
 import { getTestName } from "../../test-utils/get-test-name";
@@ -16,7 +17,7 @@ type UserMapContextStore = ContextStore<{
   [key: string]: User;
 }>;
 type UserArrayContextStore = ContextStore<Array<User>>;
-describe(getTestName(__dirname), () => {
+describe(getTestName(import.meta.url), () => {
   describe("getCreateOneContextData", () => {
     let errorString: string;
 
@@ -36,6 +37,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         const result = await getCreateOneContextData(
@@ -46,10 +49,10 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => "1",
             action: (params) => {
               return Promise.resolve(params);
             },
+            getIndex: () => "1",
           }
         );
 
@@ -101,6 +104,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         const result = await getCreateOneContextData(
@@ -111,11 +116,11 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => "1",
-            preload: (params) => {
+            action: (params) => {
               return Promise.resolve(params);
             },
-            action: (params) => {
+            getIndex: () => "1",
+            preload: (params) => {
               return Promise.resolve(params);
             },
           }
@@ -173,6 +178,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
 
@@ -186,12 +193,12 @@ describe(getTestName(__dirname), () => {
               name: "name 1",
             },
             {
+              action: (params) => {
+                throw new Error(errorString);
+              },
               getIndex: () => "1",
               preload: (params) => {
                 return Promise.resolve(params);
-              },
-              action: (params) => {
-                throw new Error(errorString);
               },
             }
           )
@@ -240,6 +247,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
 
@@ -253,12 +262,12 @@ describe(getTestName(__dirname), () => {
               name: "name 1",
             },
             {
+              action: (params) => {
+                return Promise.reject(errorString);
+              },
               getIndex: () => "1",
               preload: (params) => {
                 return Promise.resolve(params);
-              },
-              action: (params) => {
-                return Promise.reject(errorString);
               },
             }
           )
@@ -307,6 +316,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
 
@@ -320,15 +331,15 @@ describe(getTestName(__dirname), () => {
               name: "name 1",
             },
             {
-              getIndex: () => "1",
-              preload: (params) => {
-                return Promise.resolve(params);
-              },
               action: (params) => {
                 return Promise.reject(errorString);
               },
               error: () => {
                 return Promise.resolve(null);
+              },
+              getIndex: () => "1",
+              preload: (params) => {
+                return Promise.resolve(params);
               },
             }
           )
@@ -377,6 +388,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
 
@@ -390,10 +403,6 @@ describe(getTestName(__dirname), () => {
               name: "name 1",
             },
             {
-              getIndex: () => "1",
-              preload: (params) => {
-                return Promise.resolve(params);
-              },
               action: (params) => {
                 return Promise.reject(errorString);
               },
@@ -402,6 +411,10 @@ describe(getTestName(__dirname), () => {
                   id: "1",
                   name: "error 1",
                 });
+              },
+              getIndex: () => "1",
+              preload: (params) => {
+                return Promise.resolve(params);
               },
             }
           )
@@ -454,6 +467,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
 
@@ -467,13 +482,13 @@ describe(getTestName(__dirname), () => {
               name: "name 1",
             },
             {
-              getIndex: () => "1",
               action: (params) => {
                 return Promise.reject(errorString);
               },
               error: () => {
                 return Promise.reject(errorString);
               },
+              getIndex: () => "1",
             }
           )
         ).rejects.toEqual(errorMessages.errorCallbackRejected);
@@ -517,6 +532,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
 
@@ -528,10 +545,10 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => "1",
             action: (params) => {
               return Promise.resolve(params);
             },
+            getIndex: () => "1",
           }
         );
 
@@ -585,6 +602,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         const result = await getCreateOneContextData(
@@ -595,10 +614,10 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => 0,
             action: (params) => {
               return Promise.resolve(params);
             },
+            getIndex: () => 0,
           }
         );
 
@@ -650,6 +669,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         const result = await getCreateOneContextData(
@@ -660,11 +681,11 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => 0,
-            preload: (params) => {
+            action: (params) => {
               return Promise.resolve(params);
             },
-            action: (params) => {
+            getIndex: () => 0,
+            preload: (params) => {
               return Promise.resolve(params);
             },
           }
@@ -722,6 +743,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
 
@@ -735,12 +758,12 @@ describe(getTestName(__dirname), () => {
               name: "name 1",
             },
             {
+              action: (params) => {
+                return Promise.reject(errorString);
+              },
               getIndex: () => 0,
               preload: (params) => {
                 return Promise.resolve(params);
-              },
-              action: (params) => {
-                return Promise.reject(errorString);
               },
             }
           )
@@ -791,6 +814,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         const result = await getCreateOneContextData(
@@ -801,10 +826,10 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => 1,
             action: (params) => {
               return Promise.resolve(params);
             },
+            getIndex: () => 1,
           }
         );
 
@@ -856,6 +881,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         const result = await getCreateOneContextData(
@@ -866,11 +893,11 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => 1,
-            preload: (params) => {
+            action: (params) => {
               return Promise.resolve(params);
             },
-            action: (params) => {
+            getIndex: () => 1,
+            preload: (params) => {
               return Promise.resolve(params);
             },
           }
@@ -928,6 +955,8 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO figure out this typescript error
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
 
@@ -941,12 +970,12 @@ describe(getTestName(__dirname), () => {
               name: "name 1",
             },
             {
+              action: (params) => {
+                return Promise.reject(errorString);
+              },
               getIndex: () => 1,
               preload: (params) => {
                 return Promise.resolve(params);
-              },
-              action: (params) => {
-                return Promise.reject(errorString);
               },
             }
           )
@@ -998,6 +1027,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO figure out this typescript error
         return func(statefulIndexStore);
       });
       const result = await setContextDataForCreateOne(

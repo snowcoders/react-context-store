@@ -1,12 +1,8 @@
-import { configure } from "enzyme";
-import Adapter from "enzyme-adapter-react-16";
+import { beforeEach, describe, it, jest } from "@jest/globals";
+import { act } from "@testing-library/react";
 import { errorMessages } from "../../../shared";
 import { ShallowContextHarness } from "../../../test-utils/harness";
 import { ApiProvider, Context, ContextValueData, Item } from "./index.mock";
-
-configure({
-  adapter: new Adapter(),
-});
 
 describe("replaceAll", () => {
   it("completely rewrites all data", async () => {
@@ -40,7 +36,9 @@ describe("replaceAll", () => {
     expect(Object.keys(result.data).length).toBe(0);
 
     // Work
-    await result.replaceAll(data1);
+    await act(async () => {
+      await result.replaceAll(data1);
+    });
     await harness.waitForAsyncTasks();
 
     // Verify
@@ -48,7 +46,9 @@ describe("replaceAll", () => {
     expect(Object.keys(result.data).length).toBe(1);
 
     // Work
-    await result.replaceAll(data2);
+    await act(async () => {
+      await result.replaceAll(data2);
+    });
     await harness.waitForAsyncTasks();
 
     // Verify
@@ -78,7 +78,9 @@ describe("createOne", () => {
     expect(Object.keys(result.data).length).toBe(1);
 
     // Work
-    await result.createOne(newEntry);
+    await act(async () => {
+      await result.createOne(newEntry);
+    });
     await harness.waitForAsyncTasks();
 
     // Verify
@@ -108,7 +110,9 @@ describe("createOne", () => {
     expect(Object.keys(result.data).length).toBe(1);
 
     // Work
-    await result.createOne(newEntry);
+    await act(async () => {
+      await result.createOne(newEntry);
+    });
     await harness.waitForAsyncTasks();
 
     // Verify
@@ -126,16 +130,18 @@ describe("createOne", () => {
     expect(Object.keys(result.data).length).toEqual(0);
 
     // Work
-    await Promise.all([
-      result.createOne({
-        id: "0",
-        name: "0",
-      }),
-      result.createOne({
-        id: "1",
-        name: "1",
-      }),
-    ]);
+    await act(async () => {
+      await Promise.all([
+        result.createOne({
+          id: "0",
+          name: "0",
+        }),
+        result.createOne({
+          id: "1",
+          name: "1",
+        }),
+      ]);
+    });
     await harness.waitForAsyncTasks();
 
     // Verify
@@ -149,6 +155,7 @@ describe("createOne", () => {
 
 describe("updateOne", () => {
   it("only updates one value", async () => {
+    debugger;
     // Setup
     const originalData: ContextValueData = {
       b: {
@@ -210,16 +217,18 @@ describe("updateOne", () => {
     expect(Object.keys(result.data).length).toBe(3);
 
     // Work
-    const work = async () => {
-      await result.updateOne({
-        id: "4",
-        name: "New name",
-      });
-      await harness.waitForAsyncTasks();
-    };
+    await act(async () => {
+      const work = async () => {
+        await result.updateOne({
+          id: "4",
+          name: "New name",
+        });
+        await harness.waitForAsyncTasks();
+      };
 
-    // Verify
-    await expect(work).rejects.toEqual(errorMessages.indexNotFound);
+      // Verify
+      await expect(work).rejects.toEqual(errorMessages.indexNotFound);
+    });
   });
 });
 
@@ -248,8 +257,10 @@ describe("deleteOne", () => {
     expect(Object.keys(result.data).length).toBe(3);
 
     // Work
-    await result.deleteOne({
-      id: "c",
+    await act(async () => {
+      await result.deleteOne({
+        id: "c",
+      });
     });
     await harness.waitForAsyncTasks();
 
@@ -285,11 +296,13 @@ describe("deleteOne", () => {
     expect(Object.keys(result.data).length).toBe(3);
 
     // Work
-    await expect(
-      result.deleteOne({
-        id: "4",
-      })
-    ).rejects.toEqual(errorMessages.indexNotFound);
+    await act(async () => {
+      await expect(
+        result.deleteOne({
+          id: "4",
+        })
+      ).rejects.toEqual(errorMessages.indexNotFound);
+    });
   });
 
   it("sets an error state if delete action fails", async () => {
@@ -320,12 +333,14 @@ describe("deleteOne", () => {
     expect(Object.keys(result.data).length).toBe(4);
 
     // Work
-    await expect(async () => {
-      await result.deleteOne({
-        id: rejectId,
-      });
-      await harness.waitForAsyncTasks();
-    }).rejects.not.toHaveLength(0);
+    await act(async () => {
+      await expect(async () => {
+        await result.deleteOne({
+          id: rejectId,
+        });
+        await harness.waitForAsyncTasks();
+      }).rejects.not.toHaveLength(0);
+    });
 
     // Verify
     result = harness.getContextData();

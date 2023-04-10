@@ -2,45 +2,64 @@
   "author": "Snowcoders",
   "description": "A two way binding solution that uses React context as a storage mechanism.",
   "devDependencies": {
-    "@snowcoders/renovate-config": "2.0.3",
-    "@snowcoders/sortier": "3.3.0",
-    "@types/enzyme": "3.10.12",
-    "@types/enzyme-adapter-react-16": "1.0.6",
-    "@types/jest": "28.1.8",
-    "@types/react": "18.0.33",
-    "@types/react-dom": "18.0.11",
+    "@release-it/keep-a-changelog": "3.1.0",
+    "@snowcoders/renovate-config": "3.0.0-beta.12",
+    "@testing-library/jest-dom": "5.16.5",
+    "@testing-library/react": "13.4.0",
+    "@testing-library/user-event": "14.4.3",
+    "@types/react": "18.0.27",
+    "@typescript-eslint/eslint-plugin": "5.50.0",
+    "@typescript-eslint/parser": "5.50.0",
     "changelog-updater": "2.0.3",
-    "enzyme": "3.11.0",
-    "enzyme-adapter-react-16": "1.15.6",
-    "husky": "4.3.8",
-    "jest": "28.1.3",
-    "lint-staged": "13.2.1",
-    "prettier": "2.8.7",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "rimraf": "5.0.0",
-    "ts-jest": "28.0.8",
-    "tslib": "2.5.0",
-    "typescript": "4.3.5"
+    "concurrently": "7.6.0",
+    "cpy-cli": "4.2.0",
+    "eslint": "8.33.0",
+    "eslint-config-prettier": "8.6.0",
+    "eslint-plugin-import": "2.27.5",
+    "eslint-plugin-prettier": "4.2.1",
+    "husky": "8.0.3",
+    "jest": "29.4.1",
+    "jest-environment-jsdom": "29.4.1",
+    "lint-staged": "13.1.0",
+    "prettier": "2.8.3",
+    "release-it": "15.6.0",
+    "rimraf": "4.1.2",
+    "sortier": "2.0.0-beta.0",
+    "ts-jest": "29.0.5",
+    "tslib": "2.4.1",
+    "typescript": "4.9.5"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist-cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "homepage": "https://github.com/snowcoders/react-context-store",
   "license": "MIT",
-  "main": "./dist/index.js",
+  "main": "./dist-cjs/index.js",
   "name": "react-context-store",
   "peerDependencies": {
     "react": ">=16.0.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/snowcoders/react-context-store"
-  },
+  "repository": "github:snowcoders/react-context-store",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "build:prod": "tsc -p tsconfig.prod.json",
-    "clean": "rimraf dist",
-    "prepare": "npm run clean && npm run build:prod",
-    "test": "jest",
+    "build": "concurrently \"npm:build:*\"",
+    "build:cjs": "tsc -p tsconfig.cjs.json && cpy ./src/cjs-package.json.txt ./dist-cjs --flat --rename=package.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "clean": "rimraf coverage dist dist-cjs",
+    "husky:commit-msg": "echo 'No commit message hook'",
+    "husky:pre-commit": "npx --no lint-staged",
+    "husky:pre-push": "npm test",
+    "prepare": "npm run clean && npm run build && npx --no husky install",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "version": "changelog-updater && git add ."
   },
   "sideEffects": false,
+  "type": "module",
   "version": "1.1.1"
 }

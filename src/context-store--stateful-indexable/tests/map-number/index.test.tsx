@@ -1,12 +1,6 @@
-import { configure } from "enzyme";
-import Adapter from "enzyme-adapter-react-16";
 import { ContextStore } from "../../../context-store--basic";
 import { ShallowContextHarness } from "../../../test-utils/harness";
 import { ApiProvider, Context, ContextValueData } from "./index.mock";
-
-configure({
-  adapter: new Adapter(),
-});
 
 function toContextStore<T>(data: T): ContextStore<T> {
   return {

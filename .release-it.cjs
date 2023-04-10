@@ -1,3 +1,3 @@
 const configs = require("@snowcoders/renovate-config");
 
-module.exports = configs.eslint;
+module.exports = configs.releaseIt;

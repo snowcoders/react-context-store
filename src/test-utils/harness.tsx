@@ -1,17 +1,16 @@
-import { ShallowWrapper, shallow } from "enzyme";
+import { render } from "@testing-library/react";
 import React from "react";
 
 export class ShallowContextHarness<T> {
-  private wrapper: ShallowWrapper<any>;
   private dataSnapshot: null | T;
 
   constructor(Provider: any, Consumer: React.Consumer<T>) {
-    this.wrapper = shallow(
+    this.dataSnapshot = null;
+    render(
       <Provider>
         <Consumer>{this.children}</Consumer>
       </Provider>
     );
-    this.dataSnapshot = null;
   }
 
   private children = (data: T) => {
@@ -20,7 +19,6 @@ export class ShallowContextHarness<T> {
   };
 
   public getContextData() {
-    this.wrapper.dive().dive();
     if (this.dataSnapshot == null) {
       throw new Error("Harness failure - Snapshot should never be null");
     }
@@ -29,7 +27,7 @@ export class ShallowContextHarness<T> {
 
   public waitForAsyncTasks() {
     return new Promise((resolve) => {
-      setImmediate(resolve);
+      setTimeout(resolve, 1);
     });
   }
 }

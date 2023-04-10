@@ -1,28 +1,15 @@
-import { errorMessages, Stateful, statefulStates } from "../../shared";
-import {
-  IndexableContextStore,
-  IndexableContextStoreValue,
-  IndexableContextStoreKey,
-} from "../interfaces";
+import { Stateful, errorMessages, statefulStates } from "../../shared";
+import { IndexableContextStore, IndexableContextStoreKey, IndexableContextStoreValue } from "../interfaces";
 
-export async function getCreateOneContextData<
-  Params,
-  TContextStore extends IndexableContextStore<any>
->(
+export async function getCreateOneContextData<Params, TContextStore extends IndexableContextStore<any>>(
   contextDataAtTimeOfExecution: TContextStore,
   setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
   dataHandlers: {
-    action: (
-      params: Params
-    ) => Promise<IndexableContextStoreValue<TContextStore>>;
-    error?: (
-      params: Params
-    ) => Promise<IndexableContextStoreValue<TContextStore> | null>;
+    action: (params: Params) => Promise<IndexableContextStoreValue<TContextStore>>;
+    error?: (params: Params) => Promise<null | IndexableContextStoreValue<TContextStore>>;
     getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>;
-    preload?: (
-      params: Params
-    ) => Promise<IndexableContextStoreValue<TContextStore>>;
+    preload?: (params: Params) => Promise<IndexableContextStoreValue<TContextStore>>;
   }
 ): Promise<IndexableContextStoreValue<TContextStore>> {
   const { action, error, getIndex, preload } = dataHandlers;
@@ -31,37 +18,22 @@ export async function getCreateOneContextData<
   try {
     // Handle preload
     value =
-      (await setContextDataForCreateOne(
-        setContextData,
-        params,
-        getIndex,
-        statefulStates.loading,
-        preload
-      )) ?? value;
+      (await setContextDataForCreateOne(setContextData, params, getIndex, statefulStates.loading, preload)) ?? value;
 
     // Handle action
     value =
-      (await setContextDataForCreateOne(
-        setContextData,
-        params,
-        getIndex,
-        statefulStates.success,
-        action
-      )) ?? value;
+      (await setContextDataForCreateOne(setContextData, params, getIndex, statefulStates.success, action)) ?? value;
 
+    if (value == null) {
+      throw new Error("Value cannot be null after successful creation");
+    }
     return Promise.resolve(value);
   } catch (e) {
     try {
       // Creation failed, let's try to clean up but only if
       // we created a value in the first place
       if (error) {
-        await setContextDataForCreateOne(
-          setContextData,
-          params,
-          getIndex,
-          statefulStates.error,
-          error
-        );
+        await setContextDataForCreateOne(setContextData, params, getIndex, statefulStates.error, error);
       } else {
         setContextData((contextData) => {
           return {
@@ -72,10 +44,10 @@ export async function getCreateOneContextData<
       }
       if (typeof e === "string") {
         return Promise.reject(e);
+      } else if (e instanceof Error) {
+        return Promise.reject(e.message);
       } else {
-        return Promise.reject(
-          e.message || errorMessages.unknownPreloadOrActionReject
-        );
+        return Promise.reject(errorMessages.unknownPreloadOrActionReject);
       }
     } catch {
       setContextData((contextData) => {
@@ -89,17 +61,12 @@ export async function getCreateOneContextData<
   }
 }
 
-export async function setContextDataForCreateOne<
-  Params,
-  TContextStore extends IndexableContextStore<any>
->(
+export async function setContextDataForCreateOne<Params, TContextStore extends IndexableContextStore<any>>(
   setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
   getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>,
   state: Stateful["state"],
-  action?: (
-    params: Params
-  ) => Promise<IndexableContextStoreValue<TContextStore>>
+  action?: (params: Params) => Promise<null | IndexableContextStoreValue<TContextStore>>
 ) {
   // Handle preload scenario
   const index = getIndex(params);
@@ -110,9 +77,7 @@ export async function setContextDataForCreateOne<
   return value;
 }
 
-export function getUpdatedContextDataForCreateOne<
-  TContextStore extends IndexableContextStore<unknown>
->(
+export function getUpdatedContextDataForCreateOne<TContextStore extends IndexableContextStore<unknown>>(
   store: TContextStore,
   index: IndexableContextStoreKey<TContextStore>,
   value: null | IndexableContextStoreValue<TContextStore>,

@@ -1,22 +1,14 @@
 import { useCallback, useState } from "react";
 import { ContextStoreData } from "../context-store--basic/interfaces";
 import { getReplaceContextData } from "../context-store--basic/modifiers";
-import {
-  IndexableContextStore,
-  IndexableContextStoreKey,
-  IndexableContextStoreValue,
-} from "./interfaces";
-import {
-  getCreateOneContextData,
-  getDeleteOneContextData,
-  getUpdateOneContextData,
-} from "./modifiers";
+import { IndexableContextStore, IndexableContextStoreKey, IndexableContextStoreValue } from "./interfaces";
+import { getCreateOneContextData, getDeleteOneContextData, getUpdateOneContextData } from "./modifiers";
 
 export { IndexableContextStore };
 
-export function useIndexableContextStore<
-  TContextStore extends IndexableContextStore<any>
->(defaultValue: TContextStore) {
+export function useIndexableContextStore<TContextStore extends IndexableContextStore<any>>(
+  defaultValue: TContextStore
+) {
   const [contextData, setContextData] = useState(defaultValue);
 
   const useUpdateFactory = <Params = void>(
@@ -29,12 +21,7 @@ export function useIndexableContextStore<
   ) => {
     return useCallback(
       async (params: Params) => {
-        return await getReplaceContextData(
-          contextData,
-          setContextData,
-          params,
-          dataHandlers
-        );
+        return await getReplaceContextData(contextData, setContextData, params, dataHandlers);
       },
       [contextData, setContextData, ...deps]
     );
@@ -42,27 +29,16 @@ export function useIndexableContextStore<
 
   const useCreateOneFactory = <Params = void>(
     dataHandlers: {
-      action: (
-        params: Params
-      ) => Promise<IndexableContextStoreValue<TContextStore>>;
-      error?: (
-        params: Params
-      ) => Promise<IndexableContextStoreValue<TContextStore> | null>;
+      action: (params: Params) => Promise<IndexableContextStoreValue<TContextStore>>;
+      error?: (params: Params) => Promise<null | IndexableContextStoreValue<TContextStore>>;
       getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>;
-      preload?: (
-        params: Params
-      ) => Promise<IndexableContextStoreValue<TContextStore>>;
+      preload?: (params: Params) => Promise<IndexableContextStoreValue<TContextStore>>;
     },
     deps: React.DependencyList = []
   ) => {
     return useCallback(
       async (params: Params) => {
-        return await getCreateOneContextData(
-          contextData,
-          setContextData,
-          params,
-          dataHandlers
-        );
+        return await getCreateOneContextData(contextData, setContextData, params, dataHandlers);
       },
       [contextData, setContextData, ...deps]
     );
@@ -70,27 +46,16 @@ export function useIndexableContextStore<
 
   const useUpdateOneFactory = <Params = void>(
     dataHandlers: {
-      action: (
-        params: Params
-      ) => Promise<Partial<IndexableContextStoreValue<TContextStore>>>;
-      error?: (
-        params: Params
-      ) => Promise<Partial<IndexableContextStoreValue<TContextStore>> | null>;
+      action: (params: Params) => Promise<Partial<IndexableContextStoreValue<TContextStore>>>;
+      error?: (params: Params) => Promise<null | Partial<IndexableContextStoreValue<TContextStore>>>;
       getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>;
-      preload?: (
-        params: Params
-      ) => Promise<Partial<IndexableContextStoreValue<TContextStore>>>;
+      preload?: (params: Params) => Promise<Partial<IndexableContextStoreValue<TContextStore>>>;
     },
     deps: React.DependencyList = []
   ) => {
     return useCallback(
       async (params: Params) => {
-        return await getUpdateOneContextData(
-          contextData,
-          setContextData,
-          params,
-          dataHandlers
-        );
+        return await getUpdateOneContextData(contextData, setContextData, params, dataHandlers);
       },
       [contextData, setContextData, ...deps]
     );
@@ -98,25 +63,16 @@ export function useIndexableContextStore<
 
   const useDeleteOneFactory = <Params = void>(
     dataHandlers: {
-      action: (params: Params) => Promise<unknown>;
-      error?: (
-        params: Params
-      ) => Promise<IndexableContextStoreValue<TContextStore> | null>;
+      action: (params: Params) => Promise<null | IndexableContextStoreValue<TContextStore>>;
+      error?: (params: Params) => Promise<null | IndexableContextStoreValue<TContextStore>>;
       getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>;
-      preload?: (
-        params: Params
-      ) => Promise<IndexableContextStoreValue<TContextStore>>;
+      preload?: (params: Params) => Promise<IndexableContextStoreValue<TContextStore>>;
     },
     deps: React.DependencyList = []
   ) => {
     return useCallback(
       async (params: Params) => {
-        return await getDeleteOneContextData(
-          contextData,
-          setContextData,
-          params,
-          dataHandlers
-        );
+        return await getDeleteOneContextData(contextData, setContextData, params, dataHandlers);
       },
       [contextData, setContextData, ...deps]
     );
@@ -125,11 +81,11 @@ export function useIndexableContextStore<
   return [
     contextData,
     {
-      useUpdateFactory,
-      useUpdateOneFactory,
+      setContextData,
       useCreateOneFactory,
       useDeleteOneFactory,
-      setContextData,
+      useUpdateFactory,
+      useUpdateOneFactory,
     },
   ] as const;
 }
