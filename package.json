@@ -22,7 +22,7 @@
     "jest-environment-jsdom": "29.4.1",
     "lint-staged": "13.1.0",
     "prettier": "2.8.3",
-    "release-it": "15.6.0",
+    "release-it": "15.10.1",
     "rimraf": "4.1.2",
     "sortier": "2.0.0",
     "ts-jest": "29.0.5",
