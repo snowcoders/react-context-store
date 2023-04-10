@@ -1,9 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import {
-  ContextStore,
-  getNotImplementedPromise,
-  useIndexableContextStore,
-} from "../../../index";
+import { ContextStore, getNotImplementedPromise, useIndexableContextStore } from "../../../index";
 
 export type ContextValueData = Record<string, Item>;
 export type Item = {
@@ -80,7 +76,7 @@ export function ApiProvider(props: ProviderProps) {
       if (params.id === contextValue.rejectId) {
         return Promise.reject("Force reject due to id");
       }
-      return Promise.resolve();
+      return Promise.resolve(null);
     },
     getIndex: (params: DeleteOneParams) => {
       return params.id;
@@ -88,9 +84,7 @@ export function ApiProvider(props: ProviderProps) {
   });
 
   return (
-    <Context.Provider
-      value={{ ...contextValue, replaceAll, updateOne, createOne, deleteOne }}
-    >
+    <Context.Provider value={{ ...contextValue, replaceAll, updateOne, createOne, deleteOne }}>
       {children}
     </Context.Provider>
   );

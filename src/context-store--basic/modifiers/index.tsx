@@ -1,10 +1,7 @@
 import { errorMessages, statefulStates } from "../../shared";
 import { ContextStore, ContextStoreData } from "../interfaces";
 
-export async function getReplaceContextData<
-  Params,
-  TContextStore extends ContextStore<any>
->(
+export async function getReplaceContextData<Params, TContextStore extends ContextStore<any>>(
   contextData: TContextStore,
   setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
@@ -52,10 +49,10 @@ export async function getReplaceContextData<
     });
     if (typeof e === "string") {
       return Promise.reject(e);
+    } else if (e instanceof Error) {
+      return Promise.reject(e.message);
     } else {
-      return Promise.reject(
-        e.message || errorMessages.unknownPreloadOrActionReject
-      );
+      return Promise.reject(errorMessages.unknownPreloadOrActionReject);
     }
   }
 }

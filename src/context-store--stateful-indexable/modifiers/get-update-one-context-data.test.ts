@@ -1,3 +1,4 @@
+import { describe, expect, it, jest } from "@jest/globals";
 import { ContextStore } from "../../context-store--basic";
 import { errorMessages } from "../../shared";
 import { getTestName } from "../../test-utils/get-test-name";
@@ -15,7 +16,7 @@ type User = {
 type UserMapContextStore = ContextStore<{
   [key: string]: ContextStore<User>;
 }>;
-describe(getTestName(__dirname), () => {
+describe(getTestName(import.meta.url), () => {
   describe("getUpdateOneContextData", () => {
     it("Updates an entry when only action is defined", async () => {
       const statefulIndexStore: UserMapContextStore = {
@@ -31,6 +32,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       const result = await getUpdateOneContextData(
@@ -40,12 +42,12 @@ describe(getTestName(__dirname), () => {
           name: "name 1",
         },
         {
-          getIndex: () => "0",
           action: (params) => {
             return Promise.resolve({
               name: params.name,
             });
           },
+          getIndex: () => "0",
         }
       );
 
@@ -102,6 +104,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       const result = await getUpdateOneContextData(
@@ -111,12 +114,12 @@ describe(getTestName(__dirname), () => {
           name: "name 1",
         },
         {
-          getIndex: () => "0",
           action: (params) => {
             return Promise.resolve({
               name: "New name 2",
             });
           },
+          getIndex: () => "0",
           preload: (params) => {
             return Promise.resolve({
               name: "New name",
@@ -178,6 +181,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       await expect(
@@ -188,12 +192,12 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => "NOT_FOUND",
             action: (params) => {
               return Promise.resolve({
                 name: params.name,
               });
             },
+            getIndex: () => "NOT_FOUND",
           }
         )
       ).rejects.toEqual(errorMessages.indexNotFound);
@@ -215,6 +219,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       const result = await setContextDataForUpdateOne(
@@ -222,6 +227,7 @@ describe(getTestName(__dirname), () => {
         {
           name: "name 1",
         },
+        // @ts-ignore: TODO fix typings before next release
         () => "0",
         "loading",
         (params) => {

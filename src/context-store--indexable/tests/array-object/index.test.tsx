@@ -1,12 +1,7 @@
-import { configure } from "enzyme";
-import Adapter from "enzyme-adapter-react-16";
+import { beforeEach, describe, it, jest } from "@jest/globals";
 import { errorMessages } from "../../../shared";
 import { ShallowContextHarness } from "../../../test-utils/harness";
 import { ApiProvider, Context, Item } from "./index.mock";
-
-configure({
-  adapter: new Adapter(),
-});
 
 describe("replaceAll", () => {
   it("completely rewrites all data", async () => {

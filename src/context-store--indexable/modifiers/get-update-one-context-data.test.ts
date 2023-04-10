@@ -1,3 +1,4 @@
+import { beforeEach, describe, it, jest } from "@jest/globals";
 import { ContextStore } from "../../context-store--basic";
 import { errorMessages } from "../../shared";
 import { getTestName } from "../../test-utils/get-test-name";
@@ -13,7 +14,7 @@ type UserMapContextStore = ContextStore<{
   [key: string]: User;
 }>;
 type UserArrayContextStore = ContextStore<User[]>;
-describe(getTestName(__dirname), () => {
+describe(getTestName(import.meta.url), () => {
   let errorString: string;
 
   beforeEach(() => {
@@ -33,6 +34,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       const result = await getUpdateOneContextData(
@@ -42,12 +44,12 @@ describe(getTestName(__dirname), () => {
           name: "name 1",
         },
         {
-          getIndex: () => "0",
           action: (params) => {
             return Promise.resolve({
               name: params.name,
             });
           },
+          getIndex: () => "0",
         }
       );
 
@@ -99,6 +101,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       const result = await getUpdateOneContextData(
@@ -108,12 +111,12 @@ describe(getTestName(__dirname), () => {
           name: "name 1",
         },
         {
-          getIndex: () => "0",
           action: (params) => {
             return Promise.resolve({
               name: "New name 2",
             });
           },
+          getIndex: () => "0",
           preload: (params) => {
             return Promise.resolve({
               name: "New name",
@@ -170,6 +173,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       await expect(
@@ -180,10 +184,10 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => "0",
             action: (params) => {
               return Promise.reject(errorString);
             },
+            getIndex: () => "0",
           }
         )
       ).rejects.toEqual(errorString);
@@ -230,6 +234,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       await expect(
@@ -240,10 +245,10 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => "0",
             action: (params) => {
               throw new Error(errorString);
             },
+            getIndex: () => "0",
           }
         )
       ).rejects.toEqual(errorString);
@@ -290,6 +295,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       await expect(
@@ -300,13 +306,13 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => "0",
             action: (params) => {
               return Promise.reject(errorString);
             },
             error: (params) => {
               return Promise.reject(errorString);
             },
+            getIndex: () => "0",
           }
         )
       ).rejects.toEqual(errorMessages.errorCallbackRejected);
@@ -353,6 +359,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       await expect(
@@ -363,12 +370,12 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => "NOT_FOUND",
             action: (params) => {
               return Promise.resolve({
                 name: params.name,
               });
             },
+            getIndex: () => "NOT_FOUND",
           }
         )
       ).rejects.toEqual(errorMessages.indexNotFound);
@@ -388,6 +395,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       const result = await getUpdateOneContextData(
@@ -397,12 +405,12 @@ describe(getTestName(__dirname), () => {
           name: "name 1",
         },
         {
-          getIndex: () => 0,
           action: (params) => {
             return Promise.resolve({
               name: params.name,
             });
           },
+          getIndex: () => 0,
         }
       );
 
@@ -454,6 +462,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       const result = await getUpdateOneContextData(
@@ -463,12 +472,12 @@ describe(getTestName(__dirname), () => {
           name: "name 1",
         },
         {
-          getIndex: () => 0,
           action: (params) => {
             return Promise.resolve({
               name: "New name 2",
             });
           },
+          getIndex: () => 0,
           preload: (params) => {
             return Promise.resolve({
               name: "New name",
@@ -525,6 +534,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       await expect(
@@ -535,10 +545,10 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => 0,
             action: (params) => {
               return Promise.reject(errorString);
             },
+            getIndex: () => 0,
           }
         )
       ).rejects.toEqual(errorString);
@@ -585,6 +595,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       await expect(
@@ -595,10 +606,10 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => 0,
             action: (params) => {
               throw new Error(errorString);
             },
+            getIndex: () => 0,
           }
         )
       ).rejects.toEqual(errorString);
@@ -645,6 +656,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       await expect(
@@ -655,13 +667,13 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => 0,
             action: (params) => {
               return Promise.reject(errorString);
             },
             error: (params) => {
               return Promise.reject(errorString);
             },
+            getIndex: () => 0,
           }
         )
       ).rejects.toEqual(errorMessages.errorCallbackRejected);
@@ -708,6 +720,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       await expect(
@@ -718,12 +731,12 @@ describe(getTestName(__dirname), () => {
             name: "name 1",
           },
           {
-            getIndex: () => -1,
             action: (params) => {
               return Promise.resolve({
                 name: params.name,
               });
             },
+            getIndex: () => -1,
           }
         )
       ).rejects.toEqual(errorMessages.indexNotFound);

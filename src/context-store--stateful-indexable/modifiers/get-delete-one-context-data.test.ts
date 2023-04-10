@@ -1,3 +1,5 @@
+import { describe, expect, it, jest } from "@jest/globals";
+import { act } from "@testing-library/react";
 import { ContextStore } from "../../context-store--basic";
 import { errorMessages } from "../../shared";
 import { getTestName } from "../../test-utils/get-test-name";
@@ -13,7 +15,8 @@ type User = {
 };
 
 type UserMapContextStore = ContextStore<{ [key: string]: ContextStore<User> }>;
-describe(getTestName(__dirname), () => {
+
+describe(getTestName(import.meta.url), () => {
   describe("Reactive delete", () => {
     describe("action resolves", () => {
       it("Deletes item (setting states) and returns expected result", async () => {
@@ -30,26 +33,28 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
-        const result = await getDeleteOneContextData(
-          statefulIndexStore,
-          setContextData,
-          {
-            id: "0",
-          },
-          {
-            getIndex: () => "0",
-            action: (params) => {
-              return Promise.resolve();
+        await act(async () => {
+          const result = await getDeleteOneContextData(
+            statefulIndexStore,
+            setContextData,
+            {
+              id: "0",
             },
-          }
-        );
-
-        // Returns deleted item
-        expect(result).toMatchObject({
-          id: "0",
-          name: "name 0",
+            {
+              action: (params) => {
+                return Promise.resolve();
+              },
+              getIndex: () => "0",
+            }
+          );
+          // Returns deleted item
+          expect(result).toMatchObject({
+            id: "0",
+            name: "name 0",
+          });
         });
 
         expect(setContextData).toHaveBeenCalledTimes(2);
@@ -59,11 +64,11 @@ describe(getTestName(__dirname), () => {
           expect.objectContaining({
             data: {
               0: {
-                state: "loading",
                 data: {
                   id: "0",
                   name: "name 0",
                 },
+                state: "loading",
               },
             },
             state: "success",
@@ -83,16 +88,17 @@ describe(getTestName(__dirname), () => {
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
-              state: "success",
               data: {
                 id: "0",
                 name: "name 0",
               },
+              state: "success",
             },
           },
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         const result = await getDeleteOneContextData(
@@ -102,10 +108,10 @@ describe(getTestName(__dirname), () => {
             id: "0",
           },
           {
-            getIndex: () => "0",
             action: (params) => {
               return Promise.resolve();
             },
+            getIndex: () => "0",
             preload: (params) => {
               return Promise.resolve({
                 name: "preload",
@@ -127,11 +133,11 @@ describe(getTestName(__dirname), () => {
           expect.objectContaining({
             data: {
               0: {
-                state: "loading",
                 data: {
                   id: "0",
                   name: "preload",
                 },
+                state: "loading",
               },
             },
             state: "success",
@@ -155,16 +161,17 @@ describe(getTestName(__dirname), () => {
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
-              state: "success",
               data: {
                 id: "0",
                 name: "name 0",
               },
+              state: "success",
             },
           },
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         await expect(
@@ -175,10 +182,10 @@ describe(getTestName(__dirname), () => {
               id: "0",
             },
             {
-              getIndex: () => "0",
               action: (params) => {
                 return Promise.reject(rejectErrorMessage);
               },
+              getIndex: () => "0",
             }
           )
         ).rejects.toEqual(rejectErrorMessage);
@@ -190,11 +197,11 @@ describe(getTestName(__dirname), () => {
           expect.objectContaining({
             data: {
               0: {
-                state: "loading",
                 data: {
                   id: "0",
                   name: "name 0",
                 },
+                state: "loading",
               },
             },
             state: "success",
@@ -206,11 +213,11 @@ describe(getTestName(__dirname), () => {
           expect.objectContaining({
             data: {
               0: {
-                state: "error",
                 data: {
                   id: "0",
                   name: "name 0",
                 },
+                state: "error",
               },
             },
             state: "success",
@@ -224,16 +231,17 @@ describe(getTestName(__dirname), () => {
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
-              state: "success",
               data: {
                 id: "0",
                 name: "name 0",
               },
+              state: "success",
             },
           },
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         await expect(
@@ -244,7 +252,6 @@ describe(getTestName(__dirname), () => {
               id: "0",
             },
             {
-              getIndex: () => "0",
               action: (params) => {
                 return Promise.reject(rejectErrorMessage);
               },
@@ -254,6 +261,7 @@ describe(getTestName(__dirname), () => {
                   name: rejectErrorMessage,
                 });
               },
+              getIndex: () => "0",
             }
           )
         ).rejects.toEqual(rejectErrorMessage);
@@ -265,11 +273,11 @@ describe(getTestName(__dirname), () => {
           expect.objectContaining({
             data: {
               0: {
-                state: "loading",
                 data: {
                   id: "0",
                   name: "name 0",
                 },
+                state: "loading",
               },
             },
             state: "success",
@@ -281,11 +289,11 @@ describe(getTestName(__dirname), () => {
           expect.objectContaining({
             data: {
               0: {
-                state: "error",
                 data: {
                   id: "0",
                   name: rejectErrorMessage,
                 },
+                state: "error",
               },
             },
             state: "success",
@@ -297,16 +305,17 @@ describe(getTestName(__dirname), () => {
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
-              state: "success",
               data: {
                 id: "0",
                 name: "name 0",
               },
+              state: "success",
             },
           },
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         await expect(
@@ -317,13 +326,13 @@ describe(getTestName(__dirname), () => {
               id: "0",
             },
             {
-              getIndex: () => "0",
               action: (params) => {
                 return Promise.reject();
               },
               error: (params) => {
                 return Promise.reject();
               },
+              getIndex: () => "0",
             }
           )
         ).rejects.toEqual(errorMessages.errorCallbackRejected);
@@ -337,16 +346,17 @@ describe(getTestName(__dirname), () => {
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
-              state: "success",
               data: {
                 id: "0",
                 name: "name 0",
               },
+              state: "success",
             },
           },
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         await expect(
@@ -357,10 +367,10 @@ describe(getTestName(__dirname), () => {
               id: "0",
             },
             {
-              getIndex: () => "0",
               action: (params) => {
                 throw new Error(rejectErrorMessage);
               },
+              getIndex: () => "0",
             }
           )
         ).rejects.toEqual(rejectErrorMessage);
@@ -372,11 +382,11 @@ describe(getTestName(__dirname), () => {
           expect.objectContaining({
             data: {
               0: {
-                state: "loading",
                 data: {
                   id: "0",
                   name: "name 0",
                 },
+                state: "loading",
               },
             },
             state: "success",
@@ -388,11 +398,11 @@ describe(getTestName(__dirname), () => {
           expect.objectContaining({
             data: {
               0: {
-                state: "error",
                 data: {
                   id: "0",
                   name: "name 0",
                 },
+                state: "error",
               },
             },
             state: "success",
@@ -406,16 +416,17 @@ describe(getTestName(__dirname), () => {
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
-              state: "success",
               data: {
                 id: "0",
                 name: "name 0",
               },
+              state: "success",
             },
           },
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         await expect(
@@ -426,7 +437,6 @@ describe(getTestName(__dirname), () => {
               id: "0",
             },
             {
-              getIndex: () => "0",
               action: (params) => {
                 throw new Error(rejectErrorMessage);
               },
@@ -436,6 +446,7 @@ describe(getTestName(__dirname), () => {
                   name: rejectErrorMessage,
                 });
               },
+              getIndex: () => "0",
             }
           )
         ).rejects.toEqual(rejectErrorMessage);
@@ -447,11 +458,11 @@ describe(getTestName(__dirname), () => {
           expect.objectContaining({
             data: {
               0: {
-                state: "loading",
                 data: {
                   id: "0",
                   name: "name 0",
                 },
+                state: "loading",
               },
             },
             state: "success",
@@ -463,11 +474,11 @@ describe(getTestName(__dirname), () => {
           expect.objectContaining({
             data: {
               0: {
-                state: "error",
                 data: {
                   id: "0",
                   name: rejectErrorMessage,
                 },
+                state: "error",
               },
             },
             state: "success",
@@ -479,16 +490,17 @@ describe(getTestName(__dirname), () => {
         const statefulIndexStore: UserMapContextStore = {
           data: {
             0: {
-              state: "success",
               data: {
                 id: "0",
                 name: "name 0",
               },
+              state: "success",
             },
           },
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         await expect(
@@ -499,13 +511,13 @@ describe(getTestName(__dirname), () => {
               id: "0",
             },
             {
-              getIndex: () => "0",
               action: (params) => {
                 throw new Error("Throw in action");
               },
               error: (params) => {
                 throw new Error("Throw in error");
               },
+              getIndex: () => "0",
             }
           )
         ).rejects.toEqual(errorMessages.errorCallbackRejected);
@@ -517,11 +529,11 @@ describe(getTestName(__dirname), () => {
           expect.objectContaining({
             data: {
               0: {
-                state: "loading",
                 data: {
                   id: "0",
                   name: "name 0",
                 },
+                state: "loading",
               },
             },
             state: "success",
@@ -533,11 +545,11 @@ describe(getTestName(__dirname), () => {
           expect.objectContaining({
             data: {
               0: {
-                state: "error",
                 data: {
                   id: "0",
                   name: "name 0",
                 },
+                state: "error",
               },
             },
             state: "success",
@@ -552,16 +564,17 @@ describe(getTestName(__dirname), () => {
       const statefulIndexStore: UserMapContextStore = {
         data: {
           0: {
-            state: "success",
             data: {
               id: "0",
               name: "name 0",
             },
+            state: "success",
           },
         },
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       const result = await getDeleteOneContextData(
@@ -571,12 +584,12 @@ describe(getTestName(__dirname), () => {
           id: "0",
         },
         {
+          action: (params) => {
+            return Promise.resolve();
+          },
           getIndex: () => "0",
           preload: (params) => {
             return Promise.resolve(null);
-          },
-          action: (params) => {
-            return Promise.resolve();
           },
         }
       );
@@ -609,30 +622,35 @@ describe(getTestName(__dirname), () => {
     const statefulIndexStore: UserMapContextStore = {
       data: {
         0: {
-          state: "success",
           data: {
             id: "0",
             name: "name 0",
           },
+          state: "success",
         },
       },
       state: "success",
     };
     const setContextData = jest.fn((func) => {
+      // @ts-ignore: TODO fix typings before next release
       return func(statefulIndexStore);
     });
-    const result = await setContextDataForDeleteOne(
-      statefulIndexStore,
-      setContextData,
-      {
-        id: "0",
-      },
-      () => "0",
-      "loading",
-      (params) => {
-        return Promise.resolve(null);
-      }
-    );
+
+    let result: any;
+    await act(async () => {
+      result = await setContextDataForDeleteOne(
+        statefulIndexStore,
+        setContextData,
+        {
+          id: "0",
+        },
+        () => "0",
+        "loading",
+        (params) => {
+          return Promise.resolve(null);
+        }
+      );
+    });
 
     // Expect the return of the call to give me the return value of the promise
     expect(result).toMatchObject({
@@ -653,11 +671,11 @@ describe(getTestName(__dirname), () => {
     const statefulIndexStore: UserMapContextStore = {
       data: {
         0: {
-          state: "success",
           data: {
             id: "0",
             name: "name 0",
           },
+          state: "success",
         },
       },
       state: "success",

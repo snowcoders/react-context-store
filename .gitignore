@@ -1,4 +1,8 @@
-*.log
+# Locally generated files
+.DS_Store
+.rpt2_cache
 coverage
 dist
+dist-cjs
 node_modules
+*.log

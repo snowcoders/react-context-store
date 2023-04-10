@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "exclude": ["./src/**/*.test.ts", "./src/**/*.tsx"],
+  "extends": "./node_modules/@snowcoders/renovate-config/tsconfig.library.esm.json",
+  "include": ["./src/**/*"]
+}

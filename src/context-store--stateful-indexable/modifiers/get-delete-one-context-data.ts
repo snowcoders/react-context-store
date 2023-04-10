@@ -1,34 +1,20 @@
-import { errorMessages, Stateful, statefulStates } from "../../shared";
+import { Stateful, errorMessages, statefulStates } from "../../shared";
 import {
   IndexableStatefulContextStore,
-  IndexableStatefulContextStoreValueData,
   IndexableStatefulContextStoreKey,
+  IndexableStatefulContextStoreValueData,
 } from "../interfaces";
-import {
-  setContextDataForUpdateOne,
-  getUpdatedContextDataForUpdateOne,
-} from "./get-update-one-context-data";
+import { getUpdatedContextDataForUpdateOne, setContextDataForUpdateOne } from "./get-update-one-context-data";
 
-export async function getDeleteOneContextData<
-  Params,
-  TContextStore extends IndexableStatefulContextStore<unknown>
->(
+export async function getDeleteOneContextData<Params, TContextStore extends IndexableStatefulContextStore<unknown>>(
   contextData: TContextStore,
   setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
   dataHandlers: {
     action: (params: Params) => Promise<unknown>;
-    error?: (
-      params: Params
-    ) => Promise<IndexableStatefulContextStoreValueData<TContextStore> | null>;
-    getIndex: (
-      params: Params
-    ) => IndexableStatefulContextStoreKey<TContextStore>;
-    preload?: (
-      params: Params
-    ) => Promise<Partial<
-      IndexableStatefulContextStoreValueData<TContextStore>
-    > | null>;
+    error?: (params: Params) => Promise<null | IndexableStatefulContextStoreValueData<TContextStore>>;
+    getIndex: (params: Params) => IndexableStatefulContextStoreKey<TContextStore>;
+    preload?: (params: Params) => Promise<null | Partial<IndexableStatefulContextStoreValueData<TContextStore>>>;
   }
 ): Promise<IndexableStatefulContextStoreValueData<TContextStore>> {
   const { action, error, getIndex, preload } = dataHandlers;
@@ -73,44 +59,28 @@ export async function getDeleteOneContextData<
     }
   } catch (e) {
     try {
-      value = await setContextDataForUpdateOne(
-        setContextData,
-        params,
-        getIndex,
-        statefulStates.error,
-        error
-      );
+      value = await setContextDataForUpdateOne(setContextData, params, getIndex, statefulStates.error, error);
       if (typeof e === "string") {
         return Promise.reject(e);
+      } else if (e instanceof Error) {
+        return Promise.reject(e.message);
       } else {
-        return Promise.reject(
-          e.message || errorMessages.unknownPreloadOrActionReject
-        );
+        return Promise.reject(errorMessages.unknownPreloadOrActionReject);
       }
     } catch {
-      await setContextDataForUpdateOne(
-        setContextData,
-        params,
-        getIndex,
-        statefulStates.error
-      );
+      await setContextDataForUpdateOne(setContextData, params, getIndex, statefulStates.error);
       return Promise.reject(errorMessages.errorCallbackRejected);
     }
   }
 }
 
-export async function setContextDataForDeleteOne<
-  Params,
-  TContextStore extends IndexableStatefulContextStore<unknown>
->(
+export async function setContextDataForDeleteOne<Params, TContextStore extends IndexableStatefulContextStore<unknown>>(
   contextData: TContextStore,
   setContextData: React.Dispatch<React.SetStateAction<TContextStore>>,
   params: Params,
   getIndex: (params: Params) => IndexableStatefulContextStoreKey<TContextStore>,
   state: Stateful["state"],
-  action?: (
-    params: Params
-  ) => Promise<IndexableStatefulContextStoreValueData<TContextStore> | null>,
+  action?: (params: Params) => Promise<null | IndexableStatefulContextStoreValueData<TContextStore>>,
   deleteIfNull: boolean = true
 ) {
   const index = getIndex(params);
@@ -123,12 +93,7 @@ export async function setContextDataForDeleteOne<
   if (value != null) {
     const newStore = await new Promise<TContextStore>((resolve) => {
       setContextData((contextData) => {
-        const newStore = getUpdatedContextDataForUpdateOne(
-          contextData,
-          index,
-          value,
-          state
-        );
+        const newStore = getUpdatedContextDataForUpdateOne(contextData, index, value, state);
         resolve(newStore);
         return newStore;
       });
@@ -144,18 +109,14 @@ export async function setContextDataForDeleteOne<
   }
 }
 
-export function getUpdatedContextDataForDeleteOne<
-  TContextStore extends IndexableStatefulContextStore<unknown>
->(
+export function getUpdatedContextDataForDeleteOne<TContextStore extends IndexableStatefulContextStore<unknown>>(
   store: TContextStore,
   index: IndexableStatefulContextStoreKey<TContextStore>
 ): TContextStore {
   const { data } = store;
   // Handle array updates
   if (Array.isArray(data)) {
-    const newData: Array<
-      IndexableStatefulContextStoreValueData<TContextStore>
-    > = [...data];
+    const newData: Array<IndexableStatefulContextStoreValueData<TContextStore>> = [...data];
     // @ts-expect-error
     newData.splice(index, 1);
     return {
@@ -166,7 +127,6 @@ export function getUpdatedContextDataForDeleteOne<
     const newData = {
       ...data,
     };
-    // @ts-expect-error
     delete newData[index];
     return {
       ...store,

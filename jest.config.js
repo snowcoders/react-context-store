@@ -1,3 +1,6 @@
-const configs = require("@snowcoders/renovate-config");
+import { jest } from "@snowcoders/renovate-config";
 
-module.exports = configs.jest;
+export default {
+  ...jest,
+  testEnvironment: "jsdom",
+};

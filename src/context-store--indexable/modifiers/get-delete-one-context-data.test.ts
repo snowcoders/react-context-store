@@ -1,3 +1,4 @@
+import { describe, expect, it, jest } from "@jest/globals";
 import { ContextStore } from "../../context-store--basic";
 import { errorMessages } from "../../shared";
 import { getTestName } from "../../test-utils/get-test-name";
@@ -11,7 +12,7 @@ type User = {
 type UserMapContextStore = ContextStore<{
   [key: string]: User;
 }>;
-describe(getTestName(__dirname), () => {
+describe(getTestName(import.meta.url), () => {
   describe("Reactive delete", () => {
     describe("action resolves", () => {
       it("Deletes item and returns expected result", async () => {
@@ -25,6 +26,7 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         const result = await getDeleteOneContextData(
@@ -34,10 +36,10 @@ describe(getTestName(__dirname), () => {
             id: "0",
           },
           {
-            getIndex: () => "0",
             action: (params) => {
-              return Promise.resolve();
+              return Promise.resolve(null);
             },
+            getIndex: () => "0",
           }
         );
 
@@ -82,6 +84,7 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         const result = await getDeleteOneContextData(
@@ -91,10 +94,10 @@ describe(getTestName(__dirname), () => {
             id: "0",
           },
           {
-            getIndex: () => "0",
             action: (params) => {
-              return Promise.resolve();
+              return Promise.resolve(null);
             },
+            getIndex: () => "0",
             preload: (params) => {
               return Promise.resolve({
                 name: "preload",
@@ -147,6 +150,7 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         await expect(
@@ -157,10 +161,10 @@ describe(getTestName(__dirname), () => {
               id: "0",
             },
             {
-              getIndex: () => "0",
               action: (params) => {
                 return Promise.reject(rejectErrorMessage);
               },
+              getIndex: () => "0",
             }
           )
         ).rejects.toEqual(rejectErrorMessage);
@@ -206,6 +210,7 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         await expect(
@@ -216,7 +221,6 @@ describe(getTestName(__dirname), () => {
               id: "0",
             },
             {
-              getIndex: () => "0",
               action: (params) => {
                 return Promise.reject(rejectErrorMessage);
               },
@@ -226,6 +230,7 @@ describe(getTestName(__dirname), () => {
                   name: rejectErrorMessage,
                 });
               },
+              getIndex: () => "0",
             }
           )
         ).rejects.toEqual(rejectErrorMessage);
@@ -270,6 +275,7 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         return expect(
@@ -280,13 +286,13 @@ describe(getTestName(__dirname), () => {
               id: "0",
             },
             {
-              getIndex: () => "0",
               action: (params) => {
                 return Promise.reject();
               },
               error: (params) => {
                 return Promise.reject();
               },
+              getIndex: () => "0",
             }
           )
         ).rejects.toEqual(errorMessages.errorCallbackRejected);
@@ -306,6 +312,7 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         await expect(
@@ -316,10 +323,10 @@ describe(getTestName(__dirname), () => {
               id: "0",
             },
             {
-              getIndex: () => "0",
               action: (params) => {
                 throw new Error(rejectErrorMessage);
               },
+              getIndex: () => "0",
             }
           )
         ).rejects.toEqual(rejectErrorMessage);
@@ -365,6 +372,7 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         await expect(
@@ -375,7 +383,6 @@ describe(getTestName(__dirname), () => {
               id: "0",
             },
             {
-              getIndex: () => "0",
               action: (params) => {
                 throw new Error(rejectErrorMessage);
               },
@@ -385,6 +392,7 @@ describe(getTestName(__dirname), () => {
                   name: rejectErrorMessage,
                 });
               },
+              getIndex: () => "0",
             }
           )
         ).rejects.toEqual(rejectErrorMessage);
@@ -429,6 +437,7 @@ describe(getTestName(__dirname), () => {
           state: "success",
         };
         const setContextData = jest.fn((func) => {
+          // @ts-ignore: TODO fix typings before next release
           return func(statefulIndexStore);
         });
         await expect(
@@ -439,13 +448,13 @@ describe(getTestName(__dirname), () => {
               id: "0",
             },
             {
-              getIndex: () => "0",
               action: (params) => {
                 throw new Error("Throw in action");
               },
               error: (params) => {
                 throw new Error("Throw in error");
               },
+              getIndex: () => "0",
             }
           )
         ).rejects.toEqual(errorMessages.errorCallbackRejected);
@@ -493,6 +502,7 @@ describe(getTestName(__dirname), () => {
         state: "success",
       };
       const setContextData = jest.fn((func) => {
+        // @ts-ignore: TODO fix typings before next release
         return func(statefulIndexStore);
       });
       const result = await getDeleteOneContextData(
@@ -502,12 +512,12 @@ describe(getTestName(__dirname), () => {
           id: "0",
         },
         {
+          action: (params) => {
+            return Promise.resolve(null);
+          },
           getIndex: () => "0",
           preload: (params) => {
             return Promise.resolve(null);
-          },
-          action: (params) => {
-            return Promise.resolve();
           },
         }
       );
