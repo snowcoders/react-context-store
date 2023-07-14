@@ -2,7 +2,7 @@
   "author": "Snowcoders",
   "description": "A two way binding solution that uses React context as a storage mechanism.",
   "devDependencies": {
-    "@release-it/keep-a-changelog": "3.1.0",
+    "@release-it/keep-a-changelog": "4.0.0",
     "@snowcoders/renovate-config": "3.0.0-beta.13",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "14.0.0",
