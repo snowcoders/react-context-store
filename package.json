@@ -1,6 +1,6 @@
 {
   "author": "Snowcoders",
-  "description": "A two way binding solution that uses React context as a storage mechanism.",
+  "description": "React storage helpers that provide structure around useSyncExternalStore or React Context.",
   "devDependencies": {
     "@release-it/keep-a-changelog": "4.0.0",
     "@snowcoders/renovate-config": "3.0.0-beta.13",
@@ -40,6 +40,13 @@
     "./package.json": "./package.json"
   },
   "homepage": "https://github.com/snowcoders/react-context-store",
+  "keywords": [
+    "react",
+    "useSyncExternalStore",
+    "SyncExternalStore",
+    "context",
+    "store"
+  ],
   "license": "MIT",
   "main": "./dist-cjs/index.js",
   "name": "react-context-store",
