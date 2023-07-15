@@ -56,7 +56,7 @@ Now to use this in a component, all you need is useSyncExternalStore:
 import { itemStore } from "../stores/item-store.js";
 
 export const Items = () => {
-  const snapshot = React.useSyncExternalStore(...itemStore.getSyncExternalStoreParameters());
+  const snapshot = React.useSyncExternalStore(...itemStore.getUseSyncExternalStoreArgs());
   const { state, data } = snapshot;
 
   const onRefresh = () => {
@@ -97,7 +97,7 @@ jest.unstable_mockModule("../stores/item-store.js", () => {
   return {
     mockStore: {
       getAll,
-      getSyncExternalStoreParameters: () => [
+      getUseSyncExternalStoreArgs: () => [
         // subscribe
         () => () => {},
         // snapshot
