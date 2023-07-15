@@ -1,9 +1,20 @@
 import { describe, it, jest } from "@jest/globals";
-import { MockExternalStore } from "./example/store.js";
+import { SomeStore } from "./example/store.mock.js";
+
+const fetchMock: jest.Mocked<typeof global.fetch> = jest.fn();
+beforeEach(() => {
+  fetchMock.mockResolvedValue({
+    text: () => Promise.resolve("Success"),
+  } as Response);
+  Object.defineProperty(window, "fetch", {
+    value: fetchMock,
+    writable: true,
+  });
+});
 
 describe("subscribe", () => {
   it("calls subscribe callback once if subscribed twice", async () => {
-    const mockStore = new MockExternalStore();
+    const mockStore = new SomeStore();
     const onChange = jest.fn();
 
     // Subscribe twice
@@ -17,7 +28,7 @@ describe("subscribe", () => {
   });
 
   it("calls subscribe callback once if subscribed twice but unsubscribed once", async () => {
-    const mockStore = new MockExternalStore();
+    const mockStore = new SomeStore();
     const onChange = jest.fn();
 
     // Subscribe twice and unsubscribe once
@@ -32,7 +43,7 @@ describe("subscribe", () => {
   });
 
   it("does not call the subscribe callback if subscribed then unsubscribed", async () => {
-    const mockStore = new MockExternalStore();
+    const mockStore = new SomeStore();
     const onChange = jest.fn();
 
     // Subscribe and unsubscribe once
@@ -46,7 +57,7 @@ describe("subscribe", () => {
   });
 
   it("does not call the subscribe callback if subscribed twice then unsubscribed twice", async () => {
-    const mockStore = new MockExternalStore();
+    const mockStore = new SomeStore();
     const onChange = jest.fn();
 
     // Subscribe and unsubscribe once
@@ -62,7 +73,7 @@ describe("subscribe", () => {
   });
 
   it("does not call the subscribe callback if subscribed then unsubscribed twice", async () => {
-    const mockStore = new MockExternalStore();
+    const mockStore = new SomeStore();
     const onChange = jest.fn();
 
     // Subscribe and unsubscribe once
@@ -80,13 +91,13 @@ describe("subscribe", () => {
 
 describe("getSnapshot", () => {
   it("initializes with initial snapshot", async () => {
-    const mockStore = new MockExternalStore();
+    const mockStore = new SomeStore();
 
     expect(mockStore.getSnapshot().state).toBe("NOT_STARTED");
   });
 
   it("updates immediately if synchronous", async () => {
-    const mockStore = new MockExternalStore();
+    const mockStore = new SomeStore();
 
     mockStore.fetchSync();
 
@@ -94,12 +105,12 @@ describe("getSnapshot", () => {
   });
 
   it("updates twice if async", async () => {
-    const mockStore = new MockExternalStore();
+    const mockStore = new SomeStore();
 
     const promise = mockStore.fetchAsync();
     expect(mockStore.getSnapshot().state).toBe("PENDING");
 
-    await promise;
+    let result = await promise;
     expect(mockStore.getSnapshot().state).toBe("COMPLETE");
   });
 });
