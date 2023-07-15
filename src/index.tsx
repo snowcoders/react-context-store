@@ -5,6 +5,7 @@ import {
   useIndexableStatefulContextStore,
 } from "./context-store--stateful-indexable/index.js";
 import { getNotImplementedPromise } from "./shared/index.js";
+export * from "./sync-external-store/index.js";
 
 export {
   ContextStore,

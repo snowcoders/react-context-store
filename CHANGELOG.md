@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Added `ISyncExternalStore<T>` and `SyncExternalStore<T>` to make creating external stores for `React.useSyncExternalStore` easier (Requires React@18 or higher)
+
 ## [1.1.1] - 2022-10-13
 
 - Widened React peer dependencies to include everything greater than 16
