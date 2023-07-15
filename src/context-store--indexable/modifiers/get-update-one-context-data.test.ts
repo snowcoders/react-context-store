@@ -1,8 +1,8 @@
 import { beforeEach, describe, it, jest } from "@jest/globals";
-import { ContextStore } from "../../context-store--basic";
-import { errorMessages } from "../../shared";
-import { getTestName } from "../../test-utils/get-test-name";
-import { getUpdateOneContextData } from "./get-update-one-context-data";
+import { ContextStore } from "../../context-store--basic/index.js";
+import { errorMessages } from "../../shared/index.js";
+import { getTestName } from "../../test-utils/get-test-name.js";
+import { getUpdateOneContextData } from "./get-update-one-context-data.js";
 
 type User = {
   id: string;

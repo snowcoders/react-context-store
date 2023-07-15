@@ -1,5 +1,5 @@
-import { Stateful, errorMessages, statefulStates } from "../../shared";
-import { IndexableContextStore, IndexableContextStoreKey, IndexableContextStoreValue } from "../interfaces";
+import { Stateful, errorMessages, statefulStates } from "../../shared/index.js";
+import { IndexableContextStore, IndexableContextStoreKey, IndexableContextStoreValue } from "../interfaces.js";
 
 export async function getUpdateOneContextData<Params, TContextStore extends IndexableContextStore<any>>(
   contextDataAtTimeOfExecution: TContextStore,

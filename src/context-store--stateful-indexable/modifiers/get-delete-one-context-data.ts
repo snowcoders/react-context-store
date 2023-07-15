@@ -1,10 +1,10 @@
-import { Stateful, errorMessages, statefulStates } from "../../shared";
+import { Stateful, errorMessages, statefulStates } from "../../shared/index.js";
 import {
   IndexableStatefulContextStore,
   IndexableStatefulContextStoreKey,
   IndexableStatefulContextStoreValueData,
-} from "../interfaces";
-import { getUpdatedContextDataForUpdateOne, setContextDataForUpdateOne } from "./get-update-one-context-data";
+} from "../interfaces.js";
+import { getUpdatedContextDataForUpdateOne, setContextDataForUpdateOne } from "./get-update-one-context-data.js";
 
 export async function getDeleteOneContextData<Params, TContextStore extends IndexableStatefulContextStore<unknown>>(
   contextData: TContextStore,

@@ -1,5 +1,5 @@
-import { errorMessages, statefulStates } from "../../shared";
-import { ContextStore, ContextStoreData } from "../interfaces";
+import { errorMessages, statefulStates } from "../../shared/index.js";
+import { ContextStore, ContextStoreData } from "../interfaces.js";
 
 export async function getReplaceContextData<Params, TContextStore extends ContextStore<any>>(
   contextData: TContextStore,

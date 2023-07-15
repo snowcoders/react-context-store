@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
-import { getNotImplementedPromise } from "../shared";
-import { ContextStore, ContextStoreData } from "./interfaces";
-import { getReplaceContextData } from "./modifiers";
+import { getNotImplementedPromise } from "../shared/index.js";
+import { ContextStore, ContextStoreData } from "./interfaces.js";
+import { getReplaceContextData } from "./modifiers/index.js";
 
 export { ContextStore, getNotImplementedPromise };
 

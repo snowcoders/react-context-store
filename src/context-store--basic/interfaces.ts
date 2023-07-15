@@ -1,4 +1,4 @@
-import { Stateful } from "../shared";
+import { Stateful } from "../shared/index.js";
 
 export interface ContextStore<TData> extends Stateful {
   data: TData;

@@ -1,4 +1,4 @@
-import { ContextStore } from "../context-store--basic";
+import { ContextStore } from "../context-store--basic/index.js";
 
 // Helper type for when data is an indexable type (map or array)
 export type IndexableContextStoreData<IndexableContextStoreItem> = Record<

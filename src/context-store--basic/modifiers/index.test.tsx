@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import { errorMessages } from "../../shared";
+import { errorMessages } from "../../shared/index.js";
 import { getReplaceContextData } from "./index";
 
 describe("getReplaceContextData", () => {

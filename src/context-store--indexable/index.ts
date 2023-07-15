@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import { ContextStoreData } from "../context-store--basic/interfaces";
-import { getReplaceContextData } from "../context-store--basic/modifiers";
-import { IndexableContextStore, IndexableContextStoreKey, IndexableContextStoreValue } from "./interfaces";
-import { getCreateOneContextData, getDeleteOneContextData, getUpdateOneContextData } from "./modifiers";
+import { ContextStoreData } from "../context-store--basic/interfaces.js";
+import { getReplaceContextData } from "../context-store--basic/modifiers/index.js";
+import { IndexableContextStore, IndexableContextStoreKey, IndexableContextStoreValue } from "./interfaces.js";
+import { getCreateOneContextData, getDeleteOneContextData, getUpdateOneContextData } from "./modifiers/index.js";
 
 export { IndexableContextStore };
 

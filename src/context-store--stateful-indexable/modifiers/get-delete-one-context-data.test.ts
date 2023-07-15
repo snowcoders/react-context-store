@@ -1,13 +1,13 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import { act } from "@testing-library/react";
-import { ContextStore } from "../../context-store--basic";
-import { errorMessages } from "../../shared";
-import { getTestName } from "../../test-utils/get-test-name";
+import { ContextStore } from "../../context-store--basic/index.js";
+import { errorMessages } from "../../shared/index.js";
+import { getTestName } from "../../test-utils/get-test-name.js";
 import {
   getDeleteOneContextData,
   getUpdatedContextDataForDeleteOne,
   setContextDataForDeleteOne,
-} from "./get-delete-one-context-data";
+} from "./get-delete-one-context-data.js";
 
 type User = {
   id: string;
