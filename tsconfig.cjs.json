@@ -4,7 +4,7 @@
     "outDir": "./dist-cjs",
     "rootDir": "./src"
   },
-  "exclude": ["./src/**/*.test.ts", "./src/**/*.tsx"],
+  "exclude": ["./src/**/*.test.ts", "./src/**/*.test.tsx"],
   "extends": "./node_modules/@snowcoders/renovate-config/tsconfig.library.cjs.json",
   "include": ["./src/**/*"]
 }
