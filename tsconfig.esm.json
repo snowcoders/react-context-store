@@ -4,7 +4,7 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "exclude": ["./src/**/*.test.ts", "./src/**/*.test.tsx"],
+  "exclude": ["./src/**/*.test.ts", "./src/**/*.test.tsx", "./src/**/*.mock.ts", "./src/**/*.mock.tsx"],
   "extends": "./node_modules/@snowcoders/renovate-config/tsconfig.library.esm.json",
   "include": ["./src/**/*"]
 }
