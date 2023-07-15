@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from "react";
 
-import { ContextStore, getNotImplementedPromise, useIndexableStatefulContextStore } from "../../../index";
+import { ContextStore, getNotImplementedPromise, useIndexableStatefulContextStore } from "../../../index.js";
 
 export type ContextValueData = Record<string, ContextStore<Item>>;
 export type Item = {
@@ -31,7 +31,7 @@ const defaultValue: ContextValue = {
 };
 
 export const Context = React.createContext(defaultValue);
-export type ProviderProps = PropsWithChildren<{}>;
+export type ProviderProps = PropsWithChildren<Record<string, never>>;
 
 export function ApiProvider(props: ProviderProps) {
   const { children } = props;

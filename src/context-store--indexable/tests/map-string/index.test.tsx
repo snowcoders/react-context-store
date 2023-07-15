@@ -1,7 +1,7 @@
 import { beforeEach, describe, it, jest } from "@jest/globals";
 import { act } from "@testing-library/react";
-import { errorMessages } from "../../../shared";
-import { ShallowContextHarness } from "../../../test-utils/harness";
+import { errorMessages } from "../../../shared/index.js";
+import { ShallowContextHarness } from "../../../test-utils/harness.js";
 import { ApiProvider, Context, ContextValueData, Item } from "./index.mock";
 
 describe("replaceAll", () => {
@@ -155,7 +155,6 @@ describe("createOne", () => {
 
 describe("updateOne", () => {
   it("only updates one value", async () => {
-    debugger;
     // Setup
     const originalData: ContextValueData = {
       b: {

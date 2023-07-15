@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import { errorMessages } from "../../shared/index.js";
-import { getReplaceContextData } from "./index";
+import { getReplaceContextData } from "./index.js";
 
 describe("getReplaceContextData", () => {
   it("updates state correctly without any actions", async () => {

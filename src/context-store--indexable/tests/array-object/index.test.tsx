@@ -1,6 +1,6 @@
 import { beforeEach, describe, it, jest } from "@jest/globals";
-import { errorMessages } from "../../../shared";
-import { ShallowContextHarness } from "../../../test-utils/harness";
+import { errorMessages } from "../../../shared/index.js";
+import { ShallowContextHarness } from "../../../test-utils/harness.js";
 import { ApiProvider, Context, Item } from "./index.mock";
 
 describe("replaceAll", () => {
