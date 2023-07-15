@@ -38,7 +38,7 @@ export class SyncExternalStore<TSnapshot> implements ISyncExternalStore<TSnapsho
 
   getServerSnapshot = undefined;
 
-  getSyncExternalStoreParameters = () => {
+  getUseSyncExternalStoreArgs = () => {
     return [this.subscribe, this.getSnapshot, this.getServerSnapshot] as const;
   };
   protected updateSnapshot(newSnapshot: ((prevSnapshot: TSnapshot) => TSnapshot) | TSnapshot) {

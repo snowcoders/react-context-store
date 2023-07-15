@@ -2,7 +2,7 @@ import React from "react";
 import { mockStore } from "./store.js";
 
 export const MockComponent = () => {
-  const snapshot = React.useSyncExternalStore(...mockStore.getSyncExternalStoreParameters());
+  const snapshot = React.useSyncExternalStore(...mockStore.getUseSyncExternalStoreArgs());
 
   const onFetchSync = () => {
     mockStore.fetchSync();
