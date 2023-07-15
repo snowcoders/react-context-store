@@ -11,7 +11,7 @@ jest.unstable_mockModule("./store.js", () => {
     mockStore: {
       fetchAsync,
       fetchSync,
-      getSyncExternalStoreParameters: () => [
+      getUseSyncExternalStoreArgs: () => [
         // subscribe
         () => () => {},
         // snapshot
