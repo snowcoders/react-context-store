@@ -1,9 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import {
-  ContextStore,
-  getNotImplementedPromise,
-  useIndexableStatefulContextStore,
-} from "../../../index";
+import { ContextStore, getNotImplementedPromise, useIndexableStatefulContextStore } from "../../../index";
 
 export type Item = {
   id: number;
@@ -32,9 +28,7 @@ export type ProviderProps = PropsWithChildren<{}>;
 
 export function ApiProvider(props: ProviderProps) {
   const { children } = props;
-  const [contextValue, setContextValue] = useIndexableStatefulContextStore(
-    defaultValue
-  );
+  const [contextValue, setContextValue] = useIndexableStatefulContextStore(defaultValue);
 
   const replaceAll = setContextValue.useUpdateFactory({
     action: (params: ReplaceAllParams) => {
@@ -54,9 +48,5 @@ export function ApiProvider(props: ProviderProps) {
     },
   });
 
-  return (
-    <Context.Provider value={{ ...contextValue, replaceAll, updateOne }}>
-      {children}
-    </Context.Provider>
-  );
+  return <Context.Provider value={{ ...contextValue, replaceAll, updateOne }}>{children}</Context.Provider>;
 }

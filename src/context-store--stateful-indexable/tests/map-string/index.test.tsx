@@ -1,4 +1,4 @@
-import { ContextStore } from "../../../context-store--basic";
+import { ContextStore } from "../../../context-store--basic/index.js";
 import { errorMessages } from "../../../shared";
 import { ShallowContextHarness } from "../../../test-utils/harness";
 import { ApiProvider, Context, ContextValueData, Item } from "./index.mock";
@@ -259,7 +259,7 @@ describe("deleteOne", () => {
     await expect(
       result.deleteOne({
         id: "c",
-      })
+      }),
     ).resolves.toEqual({
       id: "c",
       name: "Name c",
@@ -301,7 +301,7 @@ describe("deleteOne", () => {
     await expect(
       result.deleteOne({
         id: "4",
-      })
+      }),
     ).rejects.toEqual(errorMessages.indexNotFound);
   });
 

@@ -1,5 +1,5 @@
-import { errorMessages, statefulStates } from "../../shared";
-import { ContextStore, ContextStoreData } from "../interfaces";
+import { errorMessages, statefulStates } from "../../shared/index.js";
+import { ContextStore, ContextStoreData } from "../interfaces.js";
 
 export async function getReplaceContextData<Params, TContextStore extends ContextStore<any>>(
   contextData: TContextStore,
@@ -9,7 +9,7 @@ export async function getReplaceContextData<Params, TContextStore extends Contex
     action?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
     error?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
     preload?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
-  }
+  },
 ): Promise<ContextStoreData<TContextStore>> {
   const { action, error, preload } = dataHandlers;
 

@@ -1,10 +1,6 @@
 import React, { PropsWithChildren } from "react";
 
-import {
-  ContextStore,
-  getNotImplementedPromise,
-  useIndexableContextStore,
-} from "../../../index";
+import { ContextStore, getNotImplementedPromise, useIndexableContextStore } from "../../../index";
 
 export type Item = {
   id: number;
@@ -18,20 +14,20 @@ export type UpdateOneParams = Partial<Item> & Pick<Item, "id">;
 export type PushOneParams = Item;
 export type DeleteOneParams = Pick<Item, "id">;
 export interface ContextValue extends ContextStore<contextStoreDataArray> {
-  pushOne: (params: PushOneParams) => Promise<Item>;
-  unshiftOne: (params: PushOneParams) => Promise<Item>;
   deleteOne: (params: DeleteOneParams) => Promise<Item>;
+  pushOne: (params: PushOneParams) => Promise<Item>;
   replaceAll: (params: ReplaceAllParams) => Promise<contextStoreDataArray>;
+  unshiftOne: (params: PushOneParams) => Promise<Item>;
   updateOne: (params: UpdateOneParams) => Promise<Item>;
 }
 
 const defaultValue: ContextValue = {
-  pushOne: getNotImplementedPromise,
-  unshiftOne: getNotImplementedPromise,
   data: [],
   deleteOne: getNotImplementedPromise,
+  pushOne: getNotImplementedPromise,
   replaceAll: getNotImplementedPromise,
   state: "unsent",
+  unshiftOne: getNotImplementedPromise,
   updateOne: getNotImplementedPromise,
 };
 
@@ -40,15 +36,8 @@ export type ProviderProps = PropsWithChildren<{}>;
 
 export function ApiProvider(props: ProviderProps) {
   const { children } = props;
-  const [
-    contextValue,
-    {
-      useCreateOneFactory,
-      useDeleteOneFactory,
-      useUpdateFactory,
-      useUpdateOneFactory,
-    },
-  ] = useIndexableContextStore(defaultValue);
+  const [contextValue, { useCreateOneFactory, useDeleteOneFactory, useUpdateFactory, useUpdateOneFactory }] =
+    useIndexableContextStore(defaultValue);
 
   const replaceAll = useUpdateFactory({
     action: (params: ReplaceAllParams) => {

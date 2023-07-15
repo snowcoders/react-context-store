@@ -1,5 +1,5 @@
-import { Stateful, errorMessages, statefulStates } from "../../shared";
-import { IndexableContextStore, IndexableContextStoreKey, IndexableContextStoreValue } from "../interfaces";
+import { Stateful, errorMessages, statefulStates } from "../../shared/index.js";
+import { IndexableContextStore, IndexableContextStoreKey, IndexableContextStoreValue } from "../interfaces.js";
 
 export async function getCreateOneContextData<Params, TContextStore extends IndexableContextStore<any>>(
   contextDataAtTimeOfExecution: TContextStore,
@@ -10,7 +10,7 @@ export async function getCreateOneContextData<Params, TContextStore extends Inde
     error?: (params: Params) => Promise<null | IndexableContextStoreValue<TContextStore>>;
     getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>;
     preload?: (params: Params) => Promise<IndexableContextStoreValue<TContextStore>>;
-  }
+  },
 ): Promise<IndexableContextStoreValue<TContextStore>> {
   const { action, error, getIndex, preload } = dataHandlers;
   let value: null | IndexableContextStoreValue<TContextStore> = null;
@@ -66,7 +66,7 @@ export async function setContextDataForCreateOne<Params, TContextStore extends I
   params: Params,
   getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>,
   state: Stateful["state"],
-  action?: (params: Params) => Promise<null | IndexableContextStoreValue<TContextStore>>
+  action?: (params: Params) => Promise<null | IndexableContextStoreValue<TContextStore>>,
 ) {
   // Handle preload scenario
   const index = getIndex(params);
@@ -81,7 +81,7 @@ export function getUpdatedContextDataForCreateOne<TContextStore extends Indexabl
   store: TContextStore,
   index: IndexableContextStoreKey<TContextStore>,
   value: null | IndexableContextStoreValue<TContextStore>,
-  state: keyof typeof statefulStates
+  state: keyof typeof statefulStates,
 ): TContextStore {
   const { data } = store;
   if (value == null) {

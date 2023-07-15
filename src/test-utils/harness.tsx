@@ -9,7 +9,7 @@ export class ShallowContextHarness<T> {
     render(
       <Provider>
         <Consumer>{this.children}</Consumer>
-      </Provider>
+      </Provider>,
     );
   }
 

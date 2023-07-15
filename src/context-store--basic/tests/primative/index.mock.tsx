@@ -1,9 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import {
-  ContextStore,
-  getNotImplementedPromise,
-  useContextStore,
-} from "../../../index";
+import { ContextStore, getNotImplementedPromise, useContextStore } from "../../../index";
 
 export type Item = number;
 export interface ContextValue extends ContextStore<Item> {
@@ -30,9 +26,5 @@ export function ApiProvider(props: ProviderProps) {
     },
   });
 
-  return (
-    <Context.Provider value={{ ...contextValue, oneUp: up }}>
-      {children}
-    </Context.Provider>
-  );
+  return <Context.Provider value={{ ...contextValue, oneUp: up }}>{children}</Context.Provider>;
 }

@@ -1,4 +1,4 @@
-import { ContextStore } from "../../../context-store--basic";
+import { ContextStore } from "../../../context-store--basic/index.js";
 import { errorMessages } from "../../../shared";
 import { ShallowContextHarness } from "../../../test-utils/harness";
 import { ApiProvider, Context, Item } from "./index.mock";
@@ -140,7 +140,7 @@ describe("createOne", () => {
       toContextStore({
         id: 0,
         name: "New name",
-      })
+      }),
     );
   });
 
@@ -184,7 +184,7 @@ describe("createOne", () => {
       toContextStore({
         id: 0,
         name: "New name",
-      })
+      }),
     );
   });
 });

@@ -1,8 +1,8 @@
 import { beforeEach, describe, it, jest } from "@jest/globals";
-import { ContextStore } from "../../context-store--basic";
-import { errorMessages } from "../../shared";
-import { getTestName } from "../../test-utils/get-test-name";
-import { getUpdateOneContextData } from "./get-update-one-context-data";
+import { ContextStore } from "../../context-store--basic/index.js";
+import { errorMessages } from "../../shared/index.js";
+import { getTestName } from "../../test-utils/get-test-name.js";
+import { getUpdateOneContextData } from "./get-update-one-context-data.js";
 
 type User = {
   id: string;
@@ -50,7 +50,7 @@ describe(getTestName(import.meta.url), () => {
             });
           },
           getIndex: () => "0",
-        }
+        },
       );
 
       // Expect the return of the call to give me the return value of the promise
@@ -71,7 +71,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "loading",
-        })
+        }),
       );
       // Expect setContextData to have been called first with then success
       expect(setContextData).toHaveNthReturnedWith(
@@ -85,7 +85,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "success",
-        })
+        }),
       );
     });
 
@@ -122,7 +122,7 @@ describe(getTestName(import.meta.url), () => {
               name: "New name",
             });
           },
-        }
+        },
       );
 
       // Expect the return of the call to give me the return value of the promise
@@ -143,7 +143,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "loading",
-        })
+        }),
       );
       // Expect setContextData to have been called first with then success
       expect(setContextData).toHaveNthReturnedWith(
@@ -157,7 +157,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "success",
-        })
+        }),
       );
     });
 
@@ -188,8 +188,8 @@ describe(getTestName(import.meta.url), () => {
               return Promise.reject(errorString);
             },
             getIndex: () => "0",
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(errorString);
 
       // Expect setContextData to have been called first with loading
@@ -204,7 +204,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "loading",
-        })
+        }),
       );
       // Expect setContextData to have been called first with then success
       expect(setContextData).toHaveNthReturnedWith(
@@ -218,7 +218,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "error",
-        })
+        }),
       );
     });
 
@@ -249,8 +249,8 @@ describe(getTestName(import.meta.url), () => {
               throw new Error(errorString);
             },
             getIndex: () => "0",
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(errorString);
 
       // Expect setContextData to have been called first with loading
@@ -265,7 +265,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "loading",
-        })
+        }),
       );
       // Expect setContextData to have been called first with then success
       expect(setContextData).toHaveNthReturnedWith(
@@ -279,7 +279,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "error",
-        })
+        }),
       );
     });
 
@@ -313,8 +313,8 @@ describe(getTestName(import.meta.url), () => {
               return Promise.reject(errorString);
             },
             getIndex: () => "0",
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(errorMessages.errorCallbackRejected);
 
       // Expect setContextData to have been called first with loading
@@ -329,7 +329,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "loading",
-        })
+        }),
       );
       // Expect setContextData to have been called first with then success
       expect(setContextData).toHaveNthReturnedWith(
@@ -343,7 +343,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "error",
-        })
+        }),
       );
     });
 
@@ -376,8 +376,8 @@ describe(getTestName(import.meta.url), () => {
               });
             },
             getIndex: () => "NOT_FOUND",
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(errorMessages.indexNotFound);
     });
   });
@@ -411,7 +411,7 @@ describe(getTestName(import.meta.url), () => {
             });
           },
           getIndex: () => 0,
-        }
+        },
       );
 
       // Expect the return of the call to give me the return value of the promise
@@ -432,7 +432,7 @@ describe(getTestName(import.meta.url), () => {
             },
           ],
           state: "loading",
-        })
+        }),
       );
       // Expect setContextData to have been called first with then success
       expect(setContextData).toHaveNthReturnedWith(
@@ -446,7 +446,7 @@ describe(getTestName(import.meta.url), () => {
             },
           ],
           state: "success",
-        })
+        }),
       );
     });
 
@@ -483,7 +483,7 @@ describe(getTestName(import.meta.url), () => {
               name: "New name",
             });
           },
-        }
+        },
       );
 
       // Expect the return of the call to give me the return value of the promise
@@ -504,7 +504,7 @@ describe(getTestName(import.meta.url), () => {
             },
           ],
           state: "loading",
-        })
+        }),
       );
       // Expect setContextData to have been called first with then success
       expect(setContextData).toHaveNthReturnedWith(
@@ -518,7 +518,7 @@ describe(getTestName(import.meta.url), () => {
             },
           ],
           state: "success",
-        })
+        }),
       );
     });
 
@@ -549,8 +549,8 @@ describe(getTestName(import.meta.url), () => {
               return Promise.reject(errorString);
             },
             getIndex: () => 0,
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(errorString);
 
       // Expect setContextData to have been called first with loading
@@ -565,7 +565,7 @@ describe(getTestName(import.meta.url), () => {
             },
           ],
           state: "loading",
-        })
+        }),
       );
       // Expect setContextData to have been called first with then success
       expect(setContextData).toHaveNthReturnedWith(
@@ -579,7 +579,7 @@ describe(getTestName(import.meta.url), () => {
             },
           ],
           state: "error",
-        })
+        }),
       );
     });
 
@@ -610,8 +610,8 @@ describe(getTestName(import.meta.url), () => {
               throw new Error(errorString);
             },
             getIndex: () => 0,
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(errorString);
 
       // Expect setContextData to have been called first with loading
@@ -626,7 +626,7 @@ describe(getTestName(import.meta.url), () => {
             },
           ],
           state: "loading",
-        })
+        }),
       );
       // Expect setContextData to have been called first with then success
       expect(setContextData).toHaveNthReturnedWith(
@@ -640,7 +640,7 @@ describe(getTestName(import.meta.url), () => {
             },
           ],
           state: "error",
-        })
+        }),
       );
     });
 
@@ -674,8 +674,8 @@ describe(getTestName(import.meta.url), () => {
               return Promise.reject(errorString);
             },
             getIndex: () => 0,
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(errorMessages.errorCallbackRejected);
 
       // Expect setContextData to have been called first with loading
@@ -690,7 +690,7 @@ describe(getTestName(import.meta.url), () => {
             },
           ],
           state: "loading",
-        })
+        }),
       );
       // Expect setContextData to have been called first with then success
       expect(setContextData).toHaveNthReturnedWith(
@@ -704,7 +704,7 @@ describe(getTestName(import.meta.url), () => {
             },
           ],
           state: "error",
-        })
+        }),
       );
     });
 
@@ -737,8 +737,8 @@ describe(getTestName(import.meta.url), () => {
               });
             },
             getIndex: () => -1,
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(errorMessages.indexNotFound);
     });
   });

@@ -1,10 +1,10 @@
-import { Stateful, errorMessages, statefulStates } from "../../shared";
+import { Stateful, errorMessages, statefulStates } from "../../shared/index.js";
 import {
   IndexableStatefulContextStore,
   IndexableStatefulContextStoreKey,
   IndexableStatefulContextStoreValueData,
-} from "../interfaces";
-import { getUpdatedContextDataForUpdateOne, setContextDataForUpdateOne } from "./get-update-one-context-data";
+} from "../interfaces.js";
+import { getUpdatedContextDataForUpdateOne, setContextDataForUpdateOne } from "./get-update-one-context-data.js";
 
 export async function getDeleteOneContextData<Params, TContextStore extends IndexableStatefulContextStore<unknown>>(
   contextData: TContextStore,
@@ -15,7 +15,7 @@ export async function getDeleteOneContextData<Params, TContextStore extends Inde
     error?: (params: Params) => Promise<null | IndexableStatefulContextStoreValueData<TContextStore>>;
     getIndex: (params: Params) => IndexableStatefulContextStoreKey<TContextStore>;
     preload?: (params: Params) => Promise<null | Partial<IndexableStatefulContextStoreValueData<TContextStore>>>;
-  }
+  },
 ): Promise<IndexableStatefulContextStoreValueData<TContextStore>> {
   const { action, error, getIndex, preload } = dataHandlers;
   let value: null | IndexableStatefulContextStoreValueData<TContextStore> = null;
@@ -38,7 +38,7 @@ export async function getDeleteOneContextData<Params, TContextStore extends Inde
         getIndex,
         statefulStates.loading,
         preload,
-        false
+        false,
       )) ?? value;
 
     // Handle action
@@ -49,7 +49,7 @@ export async function getDeleteOneContextData<Params, TContextStore extends Inde
         params,
         getIndex,
         statefulStates.success,
-        action
+        action,
       )) ?? value;
 
     if (value == null) {
@@ -81,7 +81,7 @@ export async function setContextDataForDeleteOne<Params, TContextStore extends I
   getIndex: (params: Params) => IndexableStatefulContextStoreKey<TContextStore>,
   state: Stateful["state"],
   action?: (params: Params) => Promise<null | IndexableStatefulContextStoreValueData<TContextStore>>,
-  deleteIfNull: boolean = true
+  deleteIfNull: boolean = true,
 ) {
   const index = getIndex(params);
   const oldValue: IndexableStatefulContextStoreValueData<TContextStore> =
@@ -111,7 +111,7 @@ export async function setContextDataForDeleteOne<Params, TContextStore extends I
 
 export function getUpdatedContextDataForDeleteOne<TContextStore extends IndexableStatefulContextStore<unknown>>(
   store: TContextStore,
-  index: IndexableStatefulContextStoreKey<TContextStore>
+  index: IndexableStatefulContextStoreKey<TContextStore>,
 ): TContextStore {
   const { data } = store;
   // Handle array updates

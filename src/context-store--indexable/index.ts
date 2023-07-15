@@ -1,13 +1,13 @@
 import { useCallback, useState } from "react";
-import { ContextStoreData } from "../context-store--basic/interfaces";
-import { getReplaceContextData } from "../context-store--basic/modifiers";
-import { IndexableContextStore, IndexableContextStoreKey, IndexableContextStoreValue } from "./interfaces";
-import { getCreateOneContextData, getDeleteOneContextData, getUpdateOneContextData } from "./modifiers";
+import { ContextStoreData } from "../context-store--basic/interfaces.js";
+import { getReplaceContextData } from "../context-store--basic/modifiers/index.js";
+import { IndexableContextStore, IndexableContextStoreKey, IndexableContextStoreValue } from "./interfaces.js";
+import { getCreateOneContextData, getDeleteOneContextData, getUpdateOneContextData } from "./modifiers/index.js";
 
 export { IndexableContextStore };
 
 export function useIndexableContextStore<TContextStore extends IndexableContextStore<any>>(
-  defaultValue: TContextStore
+  defaultValue: TContextStore,
 ) {
   const [contextData, setContextData] = useState(defaultValue);
 
@@ -17,13 +17,13 @@ export function useIndexableContextStore<TContextStore extends IndexableContextS
       error?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
       preload?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
     },
-    deps: React.DependencyList = []
+    deps: React.DependencyList = [],
   ) => {
     return useCallback(
       async (params: Params) => {
         return await getReplaceContextData(contextData, setContextData, params, dataHandlers);
       },
-      [contextData, setContextData, ...deps]
+      [contextData, setContextData, ...deps],
     );
   };
 
@@ -34,13 +34,13 @@ export function useIndexableContextStore<TContextStore extends IndexableContextS
       getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>;
       preload?: (params: Params) => Promise<IndexableContextStoreValue<TContextStore>>;
     },
-    deps: React.DependencyList = []
+    deps: React.DependencyList = [],
   ) => {
     return useCallback(
       async (params: Params) => {
         return await getCreateOneContextData(contextData, setContextData, params, dataHandlers);
       },
-      [contextData, setContextData, ...deps]
+      [contextData, setContextData, ...deps],
     );
   };
 
@@ -51,13 +51,13 @@ export function useIndexableContextStore<TContextStore extends IndexableContextS
       getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>;
       preload?: (params: Params) => Promise<Partial<IndexableContextStoreValue<TContextStore>>>;
     },
-    deps: React.DependencyList = []
+    deps: React.DependencyList = [],
   ) => {
     return useCallback(
       async (params: Params) => {
         return await getUpdateOneContextData(contextData, setContextData, params, dataHandlers);
       },
-      [contextData, setContextData, ...deps]
+      [contextData, setContextData, ...deps],
     );
   };
 
@@ -68,13 +68,13 @@ export function useIndexableContextStore<TContextStore extends IndexableContextS
       getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>;
       preload?: (params: Params) => Promise<IndexableContextStoreValue<TContextStore>>;
     },
-    deps: React.DependencyList = []
+    deps: React.DependencyList = [],
   ) => {
     return useCallback(
       async (params: Params) => {
         return await getDeleteOneContextData(contextData, setContextData, params, dataHandlers);
       },
-      [contextData, setContextData, ...deps]
+      [contextData, setContextData, ...deps],
     );
   };
 

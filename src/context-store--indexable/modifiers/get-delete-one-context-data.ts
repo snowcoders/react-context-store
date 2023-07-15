@@ -1,7 +1,7 @@
-import { Stateful, errorMessages, statefulStates } from "../../shared";
-import { IndexableContextStore, IndexableContextStoreKey, IndexableContextStoreValue } from "../interfaces";
+import { Stateful, errorMessages, statefulStates } from "../../shared/index.js";
+import { IndexableContextStore, IndexableContextStoreKey, IndexableContextStoreValue } from "../interfaces.js";
 
-import { getUpdatedContextDataForUpdateOne } from "./get-update-one-context-data";
+import { getUpdatedContextDataForUpdateOne } from "./get-update-one-context-data.js";
 
 export async function getDeleteOneContextData<Params, TContextStore extends IndexableContextStore<any>>(
   contextDataAtTimeOfExecution: TContextStore,
@@ -12,7 +12,7 @@ export async function getDeleteOneContextData<Params, TContextStore extends Inde
     error?: (params: Params) => Promise<null | IndexableContextStoreValue<TContextStore>>;
     getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>;
     preload?: (params: Params) => Promise<null | Partial<IndexableContextStoreValue<TContextStore>>>;
-  }
+  },
 ): Promise<IndexableContextStoreValue<TContextStore>> {
   const { action, error, getIndex, preload } = dataHandlers;
 
@@ -59,7 +59,7 @@ async function setContextDataForDeleteOne<Params, TContextStore extends Indexabl
   getIndex: (params: Params) => IndexableContextStoreKey<TContextStore>,
   state: Stateful["state"],
   action?: (params: Params) => Promise<null | Partial<IndexableContextStoreValue<TContextStore>>>,
-  deleteIfActionUndefined: boolean = true
+  deleteIfActionUndefined: boolean = true,
 ) {
   // Handle preload scenario
   const index = getIndex(params);
@@ -82,7 +82,7 @@ function getUpdatedContextDataForDeleteOne<TContextStore extends IndexableContex
   store: TContextStore,
   index: IndexableContextStoreKey<TContextStore>,
   value: null | Partial<IndexableContextStoreValue<TContextStore>>,
-  state: keyof typeof statefulStates
+  state: keyof typeof statefulStates,
 ): TContextStore {
   if (value != null) {
     return getUpdatedContextDataForUpdateOne(store, index, value, state);

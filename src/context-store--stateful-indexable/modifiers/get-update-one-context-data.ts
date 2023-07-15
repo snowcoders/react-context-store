@@ -1,10 +1,10 @@
-import { Stateful, errorMessages, statefulStates } from "../../shared";
+import { Stateful, errorMessages, statefulStates } from "../../shared/index.js";
 import {
   IndexableStatefulContextStore,
   IndexableStatefulContextStoreKey,
   IndexableStatefulContextStoreValue,
   IndexableStatefulContextStoreValueData,
-} from "../interfaces";
+} from "../interfaces.js";
 
 export async function getUpdateOneContextData<Params, TContextStore extends IndexableStatefulContextStore<unknown>>(
   contextData: TContextStore,
@@ -15,14 +15,14 @@ export async function getUpdateOneContextData<Params, TContextStore extends Inde
     error?: (params: Params) => Promise<null | Partial<IndexableStatefulContextStoreValueData<TContextStore>>>;
     getIndex: (params: Params) => IndexableStatefulContextStoreKey<TContextStore>;
     preload?: (params: Params) => Promise<Partial<IndexableStatefulContextStoreValueData<TContextStore>>>;
-  }
+  },
 ): Promise<IndexableStatefulContextStoreValueData<TContextStore>> {
   const { action, error, getIndex, preload } = dataHandlers;
   let value: null | IndexableStatefulContextStoreValueData<TContextStore> = null;
 
   // If the index doesn't exist, nothing to do
   const index = getIndex(params);
-  // @ts-expect-error
+  // @ts-expect-error - TODO: Actually look into this, I think primitives might be broken
   const oldData = contextData.data[index];
   if (oldData == null) {
     return Promise.reject(errorMessages.indexNotFound);
@@ -69,7 +69,7 @@ export async function setContextDataForUpdateOne<Params, TContextStore extends I
   params: Params,
   getIndex: (params: Params) => IndexableStatefulContextStoreKey<TContextStore>,
   state: Stateful["state"],
-  action?: (params: Params) => Promise<null | Partial<IndexableStatefulContextStoreValueData<TContextStore>>>
+  action?: (params: Params) => Promise<null | Partial<IndexableStatefulContextStoreValueData<TContextStore>>>,
 ) {
   // Handle preload scenario
   const index = getIndex(params);
@@ -83,8 +83,8 @@ export async function setContextDataForUpdateOne<Params, TContextStore extends I
     });
   });
   const d = newStore.data;
-  let a: IndexableStatefulContextStoreValue<TContextStore> =
-    // @ts-expect-error
+  const a: IndexableStatefulContextStoreValue<TContextStore> =
+    // @ts-expect-error - TODO: Actually look into this, I think primitives might be broken
     d[index];
   return a.data;
 }
@@ -93,11 +93,11 @@ export function getUpdatedContextDataForUpdateOne<TContextStore extends Indexabl
   store: TContextStore,
   index: IndexableStatefulContextStoreKey<TContextStore>,
   value: null | Partial<IndexableStatefulContextStoreValueData<TContextStore>>,
-  state: keyof typeof statefulStates
+  state: keyof typeof statefulStates,
 ): TContextStore {
   const { data } = store;
   const oldValue: IndexableStatefulContextStoreValue<TContextStore> =
-    // @ts-expect-error
+    // @ts-expect-error - TODO: Actually look into this, I think primitives might be broken
     data[index];
   const newValue: typeof oldValue = {
     data: {
@@ -110,7 +110,7 @@ export function getUpdatedContextDataForUpdateOne<TContextStore extends Indexabl
   // Handle array updates
   if (Array.isArray(data)) {
     const newData: Array<IndexableStatefulContextStoreValueData<TContextStore>> = [...data];
-    // @ts-expect-error
+    // @ts-expect-error - TODO: Actually look into this, I think primitives might be broken
     newData.splice(index, 1, newValue);
     return {
       ...store,

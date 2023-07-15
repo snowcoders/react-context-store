@@ -1,12 +1,12 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import { ContextStore } from "../../context-store--basic";
-import { errorMessages } from "../../shared";
-import { getTestName } from "../../test-utils/get-test-name";
+import { ContextStore } from "../../context-store--basic/index.js";
+import { errorMessages } from "../../shared/index.js";
+import { getTestName } from "../../test-utils/get-test-name.js";
 import {
   getUpdateOneContextData,
   getUpdatedContextDataForUpdateOne,
   setContextDataForUpdateOne,
-} from "./get-update-one-context-data";
+} from "./get-update-one-context-data.js";
 
 type User = {
   id: string;
@@ -48,7 +48,7 @@ describe(getTestName(import.meta.url), () => {
             });
           },
           getIndex: () => "0",
-        }
+        },
       );
 
       // Expect the return of the call to give me the return value of the promise
@@ -70,7 +70,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "success",
-        })
+        }),
       );
       // Expect setContextData to have been called first with then success
       expect(setContextData).toHaveNthReturnedWith(
@@ -86,7 +86,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "success",
-        })
+        }),
       );
     });
 
@@ -125,7 +125,7 @@ describe(getTestName(import.meta.url), () => {
               name: "New name",
             });
           },
-        }
+        },
       );
 
       // Expect the return of the call to give me the return value of the promise
@@ -147,7 +147,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "success",
-        })
+        }),
       );
       // Expect setContextData to have been called first with then success
       expect(setContextData).toHaveNthReturnedWith(
@@ -163,7 +163,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "success",
-        })
+        }),
       );
     });
 
@@ -198,8 +198,8 @@ describe(getTestName(import.meta.url), () => {
               });
             },
             getIndex: () => "NOT_FOUND",
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(errorMessages.indexNotFound);
     });
   });
@@ -232,7 +232,7 @@ describe(getTestName(import.meta.url), () => {
         "loading",
         (params) => {
           return Promise.resolve(params);
-        }
+        },
       );
 
       // Expect the return of the call to give me the return value of the promise
@@ -254,7 +254,7 @@ describe(getTestName(import.meta.url), () => {
             },
           },
           state: "success",
-        })
+        }),
       );
     });
   });
@@ -279,7 +279,7 @@ describe(getTestName(import.meta.url), () => {
         {
           name: "name 1",
         },
-        "loading"
+        "loading",
       );
 
       expect(result).toMatchObject({
