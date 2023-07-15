@@ -1,10 +1,6 @@
 import React, { PropsWithChildren } from "react";
 
-import {
-  ContextStore,
-  getNotImplementedPromise,
-  useIndexableStatefulContextStore,
-} from "../../../index";
+import { ContextStore, getNotImplementedPromise, useIndexableStatefulContextStore } from "../../../index";
 
 export type Item = {
   id: number;
@@ -38,15 +34,8 @@ export type ProviderProps = PropsWithChildren<{}>;
 
 export function ApiProvider(props: ProviderProps) {
   const { children } = props;
-  const [
-    contextValue,
-    {
-      useCreateOneFactory,
-      useDeleteOneFactory,
-      useUpdateFactory,
-      useUpdateOneFactory,
-    },
-  ] = useIndexableStatefulContextStore<ContextValue>(defaultValue);
+  const [contextValue, { useCreateOneFactory, useDeleteOneFactory, useUpdateFactory, useUpdateOneFactory }] =
+    useIndexableStatefulContextStore<ContextValue>(defaultValue);
 
   const replaceAll = useUpdateFactory({
     action: (params: ReplaceAllParams) => {
@@ -91,9 +80,7 @@ export function ApiProvider(props: ProviderProps) {
   });
 
   return (
-    <Context.Provider
-      value={{ ...contextValue, replaceAll, updateOne, createOne, deleteOne }}
-    >
+    <Context.Provider value={{ ...contextValue, replaceAll, updateOne, createOne, deleteOne }}>
       {children}
     </Context.Provider>
   );

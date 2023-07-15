@@ -140,7 +140,7 @@ describe("createOne", () => {
       toContextStore({
         id: 0,
         name: "New name",
-      })
+      }),
     );
   });
 
@@ -184,7 +184,7 @@ describe("createOne", () => {
       toContextStore({
         id: 0,
         name: "New name",
-      })
+      }),
     );
   });
 });

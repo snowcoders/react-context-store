@@ -6,15 +6,9 @@ export type IndexableContextStoreData<IndexableContextStoreItem> = Record<
   IndexableContextStoreItem
 >;
 
-export interface IndexableContextStore<TDataItem>
-  extends ContextStore<IndexableContextStoreData<TDataItem>> {}
+export interface IndexableContextStore<TDataItem> extends ContextStore<IndexableContextStoreData<TDataItem>> {}
 
-export type IndexableContextStoreValue<
-  TContextStore extends IndexableContextStore<any>
-> = TContextStore["data"][any];
+export type IndexableContextStoreValue<TContextStore extends IndexableContextStore<any>> = TContextStore["data"][any];
 
-export type IndexableContextStoreKey<
-  TContextStore extends IndexableContextStore<any>
-> = TContextStore["data"] extends Array<any>
-  ? number
-  : keyof TContextStore["data"];
+export type IndexableContextStoreKey<TContextStore extends IndexableContextStore<any>> =
+  TContextStore["data"] extends Array<any> ? number : keyof TContextStore["data"];

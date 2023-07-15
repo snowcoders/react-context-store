@@ -300,7 +300,7 @@ describe("deleteOne", () => {
       await expect(
         result.deleteOne({
           id: "4",
-        })
+        }),
       ).rejects.toEqual(errorMessages.indexNotFound);
     });
   });

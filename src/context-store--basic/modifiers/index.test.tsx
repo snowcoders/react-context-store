@@ -16,8 +16,8 @@ describe("getReplaceContextData", () => {
         },
         spy,
         undefined,
-        {}
-      )
+        {},
+      ),
     ).resolves.toMatchObject(data);
 
     expect(spy).toHaveBeenCalledTimes(2);
@@ -50,8 +50,8 @@ describe("getReplaceContextData", () => {
             preload: () => {
               return Promise.reject(rejectMessage);
             },
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(rejectMessage);
 
       expect(spy).toHaveBeenCalledTimes(1);
@@ -79,8 +79,8 @@ describe("getReplaceContextData", () => {
             action: () => {
               return Promise.reject(rejectMessage);
             },
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(rejectMessage);
 
       expect(spy).toHaveBeenCalledTimes(2);
@@ -115,8 +115,8 @@ describe("getReplaceContextData", () => {
             error: () => {
               return Promise.reject(rejectMessage);
             },
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(errorMessages.errorCallbackRejected);
 
       expect(spy).toHaveBeenCalledTimes(2);
@@ -150,8 +150,8 @@ describe("getReplaceContextData", () => {
             preload: () => {
               throw new Error(rejectMessage);
             },
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(rejectMessage);
 
       expect(spy).toHaveBeenCalledTimes(1);
@@ -179,8 +179,8 @@ describe("getReplaceContextData", () => {
             action: () => {
               throw new Error(rejectMessage);
             },
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(rejectMessage);
 
       expect(spy).toHaveBeenCalledTimes(2);
@@ -215,8 +215,8 @@ describe("getReplaceContextData", () => {
             error: () => {
               throw new Error(rejectMessage);
             },
-          }
-        )
+          },
+        ),
       ).rejects.toEqual(errorMessages.errorCallbackRejected);
 
       expect(spy).toHaveBeenCalledTimes(2);

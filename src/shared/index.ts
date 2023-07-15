@@ -9,11 +9,10 @@ export interface Stateful {
 }
 
 export const errorMessages = {
-  indexNotFound: "Index not found",
-  unknownPreloadOrActionReject:
-    "Preload or action promise rejected without message",
-  errorCallbackRejected: "Error callback should never reject",
   actionReturnedNull: "Action did not return value",
+  errorCallbackRejected: "Error callback should never reject",
+  indexNotFound: "Index not found",
+  unknownPreloadOrActionReject: "Preload or action promise rejected without message",
 };
 
 export const getNotImplementedPromise = () => Promise.reject("Not Implemented");

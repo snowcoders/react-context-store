@@ -15,7 +15,7 @@ export async function getUpdateOneContextData<Params, TContextStore extends Inde
     error?: (params: Params) => Promise<null | Partial<IndexableStatefulContextStoreValueData<TContextStore>>>;
     getIndex: (params: Params) => IndexableStatefulContextStoreKey<TContextStore>;
     preload?: (params: Params) => Promise<Partial<IndexableStatefulContextStoreValueData<TContextStore>>>;
-  }
+  },
 ): Promise<IndexableStatefulContextStoreValueData<TContextStore>> {
   const { action, error, getIndex, preload } = dataHandlers;
   let value: null | IndexableStatefulContextStoreValueData<TContextStore> = null;
@@ -69,7 +69,7 @@ export async function setContextDataForUpdateOne<Params, TContextStore extends I
   params: Params,
   getIndex: (params: Params) => IndexableStatefulContextStoreKey<TContextStore>,
   state: Stateful["state"],
-  action?: (params: Params) => Promise<null | Partial<IndexableStatefulContextStoreValueData<TContextStore>>>
+  action?: (params: Params) => Promise<null | Partial<IndexableStatefulContextStoreValueData<TContextStore>>>,
 ) {
   // Handle preload scenario
   const index = getIndex(params);
@@ -93,7 +93,7 @@ export function getUpdatedContextDataForUpdateOne<TContextStore extends Indexabl
   store: TContextStore,
   index: IndexableStatefulContextStoreKey<TContextStore>,
   value: null | Partial<IndexableStatefulContextStoreValueData<TContextStore>>,
-  state: keyof typeof statefulStates
+  state: keyof typeof statefulStates,
 ): TContextStore {
   const { data } = store;
   const oldValue: IndexableStatefulContextStoreValue<TContextStore> =

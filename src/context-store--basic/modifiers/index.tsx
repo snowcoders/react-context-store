@@ -9,7 +9,7 @@ export async function getReplaceContextData<Params, TContextStore extends Contex
     action?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
     error?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
     preload?: (params: Params) => Promise<ContextStoreData<TContextStore>>;
-  }
+  },
 ): Promise<ContextStoreData<TContextStore>> {
   const { action, error, preload } = dataHandlers;
 
