@@ -1,5 +1,5 @@
 import { beforeEach, describe, it, jest } from "@jest/globals";
-import { ShallowContextHarness } from "../../../test-utils/harness";
+import { ShallowContextHarness } from "../../../test-utils/harness.js";
 import { ApiProvider, Context } from "./index.mock";
 
 describe("Context store - object", () => {

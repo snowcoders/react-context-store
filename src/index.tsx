@@ -1,7 +1,10 @@
 import { ContextStore, useContextStore } from "./context-store--basic/index.js";
-import { IndexableContextStore, useIndexableContextStore } from "./context-store--indexable";
-import { IndexableStatefulContextStore, useIndexableStatefulContextStore } from "./context-store--stateful-indexable";
-import { getNotImplementedPromise } from "./shared";
+import { IndexableContextStore, useIndexableContextStore } from "./context-store--indexable/index.js";
+import {
+  IndexableStatefulContextStore,
+  useIndexableStatefulContextStore,
+} from "./context-store--stateful-indexable/index.js";
+import { getNotImplementedPromise } from "./shared/index.js";
 
 export {
   ContextStore,

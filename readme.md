@@ -64,7 +64,7 @@ const defaultValue: ContextValue = {
 };
 
 export const Context = React.createContext(defaultValue);
-export type ProviderProps = PropsWithChildren<{}>;
+export type ProviderProps = PropsWithChildren<Record<string, never>>;
 
 export function ApiProvider(props: ProviderProps) {
   const { children } = props;

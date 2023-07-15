@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import { ContextStore, getNotImplementedPromise, useContextStore } from "../../../index";
+import { ContextStore, getNotImplementedPromise, useContextStore } from "../../../index.js";
 
 export type Item = {
   id: 0;
@@ -21,7 +21,7 @@ const defaultValue: ContextValue = {
 };
 
 export const Context = React.createContext(defaultValue);
-export type ProviderProps = PropsWithChildren<{}>;
+export type ProviderProps = PropsWithChildren<Record<string, never>>;
 
 export function ApiProvider(props: ProviderProps) {
   const { children } = props;

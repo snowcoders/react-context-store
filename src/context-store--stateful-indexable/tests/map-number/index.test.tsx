@@ -1,5 +1,5 @@
 import { ContextStore } from "../../../context-store--basic/index.js";
-import { ShallowContextHarness } from "../../../test-utils/harness";
+import { ShallowContextHarness } from "../../../test-utils/harness.js";
 import { ApiProvider, Context, ContextValueData } from "./index.mock";
 
 function toContextStore<T>(data: T): ContextStore<T> {
