@@ -24,7 +24,7 @@
     "prettier": "3.0.3",
     "release-it": "16.2.1",
     "rimraf": "5.0.5",
-    "sortier": "2.0.1",
+    "sortier": "2.0.2",
     "ts-jest": "29.1.1",
     "tslib": "2.6.2",
     "typescript": "5.1.6"
