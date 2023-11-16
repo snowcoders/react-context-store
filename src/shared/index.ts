@@ -16,3 +16,23 @@ export const errorMessages = {
 };
 
 export const getNotImplementedPromise = () => Promise.reject("Not Implemented");
+
+export function normalizeError(error: unknown): null | string {
+  if (error == null) {
+    return null;
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return JSON.stringify(error);
+}
+
+export type CreateActionParams<TParams, TResponse> = {
+  action: (params: TParams) => Promise<TResponse>;
+};
