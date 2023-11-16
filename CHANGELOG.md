@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0-beta.0] - 2023-07-15
 
 - Added `ISyncExternalStore<T>` and `SyncExternalStore<T>` to make creating external stores for `React.useSyncExternalStore` easier (Requires React@18 or higher)
+- Add `StatefulSyncExternalStore` to provide structured extension of `SyncExternalStore`.
 
 ## [1.1.1] - 2022-10-13
 
