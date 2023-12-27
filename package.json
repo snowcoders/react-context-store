@@ -2,7 +2,7 @@
   "author": "Snowcoders",
   "description": "React storage helpers that provide structure around useSyncExternalStore or React Context.",
   "devDependencies": {
-    "@release-it/keep-a-changelog": "4.0.0",
+    "@release-it/keep-a-changelog": "5.0.0",
     "@snowcoders/renovate-config": "3.0.0-beta.14",
     "@testing-library/jest-dom": "6.1.5",
     "@testing-library/react": "14.1.2",
@@ -22,7 +22,7 @@
     "jest-environment-jsdom": "29.7.0",
     "lint-staged": "15.2.0",
     "prettier": "3.1.1",
-    "release-it": "16.3.0",
+    "release-it": "17.0.1",
     "rimraf": "5.0.5",
     "sortier": "2.0.2",
     "ts-jest": "29.1.1",
