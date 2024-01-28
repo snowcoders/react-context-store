@@ -4,7 +4,7 @@ import type { StatefulIndexableStore } from "./types.js";
 export function createStatefulIndexableLoadingSnapshot<TStore extends StatefulIndexableStore<unknown>>(
   key: keyof TStore,
 ) {
-  return (snapshot: TStore) => {
+  return (snapshot: TStore): TStore => {
     return {
       ...snapshot,
       [key]: {
@@ -20,7 +20,7 @@ export function createStatefulIndexableErrorSnapshot<TStore extends StatefulInde
   error: unknown,
 ) {
   const errorMessage = normalizeError(error);
-  return (snapshot: TStore) => {
+  return (snapshot: TStore): TStore => {
     return {
       ...snapshot,
       [key]: {
@@ -36,7 +36,7 @@ export function createStatefulIndexableSuccessSnapshot<TStore extends StatefulIn
   key: keyof TStore,
   data: TData,
 ) {
-  return (snapshot: TStore) => {
+  return (snapshot: TStore): TStore => {
     return {
       ...snapshot,
       [key]: {

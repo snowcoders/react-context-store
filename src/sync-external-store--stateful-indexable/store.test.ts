@@ -1,17 +1,17 @@
-import { beforeEach, afterEach, describe, it, jest } from "@jest/globals";
-import { StatefulIndexableStore } from "./types.js";
+import { afterEach, beforeEach, describe, it, jest } from "@jest/globals";
 import { StatefulIndexableSyncExternalStore } from "./store.js";
+import { StatefulIndexableStore } from "./types.js";
 
 describe("StatefulIndexableSyncExternalStore", () => {
   type Item = { id: number; value: string };
   const mockAction = jest.fn(async (value) => value);
   const mockStoreInitialState: StatefulIndexableStore<null | Item> = {
-    hello: {
+    goodbye: {
       data: null,
       error: null,
       state: "unsent",
     },
-    goodbye: {
+    hello: {
       data: null,
       error: null,
       state: "unsent",
@@ -22,7 +22,7 @@ describe("StatefulIndexableSyncExternalStore", () => {
     constructor() {
       super(mockStoreInitialState);
     }
-    private async updateDataAction(key: string, value: Item) {
+    private async putAction(key: string, value: Item) {
       const action = this.createAction({
         action: mockAction,
         key,
@@ -30,10 +30,10 @@ describe("StatefulIndexableSyncExternalStore", () => {
       return action(value);
     }
     public async updateHello(value: Item) {
-      await this.updateDataAction("hello", value);
+      await this.putAction("hello", value);
     }
     public async updateGoodbye(value: Item) {
-      await this.updateDataAction("goodbye", value);
+      await this.putAction("goodbye", value);
     }
   }
 

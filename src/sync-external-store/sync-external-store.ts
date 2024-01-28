@@ -41,6 +41,7 @@ export class SyncExternalStore<TSnapshot> implements ISyncExternalStore<TSnapsho
   getUseSyncExternalStoreArgs = () => {
     return [this.subscribe, this.getSnapshot, this.getServerSnapshot] as const;
   };
+
   protected updateSnapshot(newSnapshot: ((prevSnapshot: TSnapshot) => TSnapshot) | TSnapshot) {
     if (typeof newSnapshot === "function") {
       // @ts-expect-error: Not sure how to narrow a Function further to match our particular definition

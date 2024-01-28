@@ -2,9 +2,10 @@ import { normalizeError } from "../shared/index.js";
 import type { StatefulStore } from "./types.js";
 
 export function createStatefulLoadingSnapshot<TStore extends StatefulStore<unknown>>() {
-  return (snapshot: TStore) => {
+  return (snapshot: TStore): TStore => {
     return {
       ...snapshot,
+      error: null,
       state: "loading",
     };
   };
@@ -12,7 +13,7 @@ export function createStatefulLoadingSnapshot<TStore extends StatefulStore<unkno
 
 export function createStatefulErrorSnapshot<TStore extends StatefulStore<unknown>>(error: unknown) {
   const errorMessage = normalizeError(error);
-  return (snapshot: TStore) => {
+  return (snapshot: TStore): TStore => {
     return {
       ...snapshot,
       error: errorMessage,
@@ -22,10 +23,11 @@ export function createStatefulErrorSnapshot<TStore extends StatefulStore<unknown
 }
 
 export function createStatefulSuccessSnapshot<TStore extends StatefulStore<unknown>>(data: TStore["data"]) {
-  return (snapshot: TStore) => {
+  return (snapshot: TStore): TStore => {
     return {
       ...snapshot,
       data,
+      error: null,
       state: "success",
     };
   };

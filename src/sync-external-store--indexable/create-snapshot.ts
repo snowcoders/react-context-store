@@ -2,9 +2,10 @@ import { normalizeError } from "../shared/index.js";
 import type { IndexableStore, IndexableStoreStructureKey } from "./types.js";
 
 export function createIndexableLoadingSnapshot<TStore extends IndexableStore<unknown>>() {
-  return (snapshot: TStore) => {
+  return (snapshot: TStore): TStore => {
     return {
       ...snapshot,
+      error: null,
       state: "loading",
     };
   };
@@ -12,7 +13,7 @@ export function createIndexableLoadingSnapshot<TStore extends IndexableStore<unk
 
 export function createIndexableErrorSnapshot<TStore extends IndexableStore<unknown>>(error: unknown) {
   const errorMessage = normalizeError(error);
-  return (snapshot: TStore) => {
+  return (snapshot: TStore): TStore => {
     return {
       ...snapshot,
       error: errorMessage,
@@ -25,11 +26,14 @@ export function createIndexableSuccessSnapshot<TStore extends IndexableStore<unk
   key: IndexableStoreStructureKey<TStore>,
   data: TData,
 ) {
-  return (snapshot: TStore) => {
+  return (snapshot: TStore): TStore => {
     if (Array.isArray(snapshot.data) && typeof key === "number") {
+      const newData = [...snapshot.data];
+      newData[key] = data;
       return {
         ...snapshot,
-        data: [...snapshot.data.slice(0, key), data, ...snapshot.data.slice(key + 1)],
+        data: newData,
+        error: null,
         state: "success",
       };
     } else {
@@ -39,6 +43,7 @@ export function createIndexableSuccessSnapshot<TStore extends IndexableStore<unk
           ...snapshot.data,
           [key]: data,
         },
+        error: null,
         state: "success",
       };
     }

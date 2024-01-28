@@ -1,4 +1,4 @@
-import { beforeEach, afterEach, describe, it, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, it, jest } from "@jest/globals";
 import { StatefulSyncExternalStore } from "./store.js";
 import { StatefulStore } from "./types.js";
 
@@ -16,14 +16,14 @@ describe("StatefulSyncExternalStore", () => {
       super(mockStoreInitialState);
     }
 
-    private async updateDataAction(value: Item) {
+    private async putAction(value: Item) {
       const action = this.createAction({
         action: mockAction,
       });
       return action(value);
     }
-    public async updateData(value: Item) {
-      await this.updateDataAction(value);
+    public async put(value: Item) {
+      await this.putAction(value);
     }
   }
 
@@ -42,7 +42,7 @@ describe("StatefulSyncExternalStore", () => {
     const mockItem: Item = { id: 2112, value: "hello world" };
 
     //* Act
-    await store.updateData(mockItem);
+    await store.put(mockItem);
     const updatedSnapshot = store.getSnapshot();
 
     //* Assert

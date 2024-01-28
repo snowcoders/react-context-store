@@ -14,7 +14,7 @@ export type IndexableStoreStructureKey<TStore extends IndexableStore<unknown>> =
   : keyof TStore["data"];
 
 export type IndexableStore<TData> = {
-  data: Record<string | number | symbol, TData> | Array<TData>;
+  data: Array<TData> | Record<PropertyKey, TData>;
   error: null | string;
   state: keyof typeof statefulStates;
 };
@@ -26,8 +26,8 @@ export type CreateIndexableActionParams<
 > = CreateActionParams<TParams, TResponse> & {
   key: IndexableStoreStructureKey<TStore>;
   updateSnapshot?: {
+    error: CreateIndexableErrorSnapshot;
     loading: CreateIndexableLoadingSnapshot;
     success: CreateIndexableSuccessSnapshot;
-    error: CreateIndexableErrorSnapshot;
   };
 };
