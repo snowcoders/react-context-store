@@ -12,6 +12,11 @@ export interface ISyncExternalStore<T> {
 
 const noop = () => {};
 
+/**
+ * A basic implementation of a store to speed integration with useSyncExternalStore:
+ *  - Keeping track of subscribers
+ *  - A handy `getUseSyncExternalStoreArgs` function for use as `useSyncExternalStore(...exampleStore.getUseSyncExternalStoreArgs())`
+ */
 export class SyncExternalStore<TSnapshot> implements ISyncExternalStore<TSnapshot> {
   private subscribers: Set<Parameters<ISyncExternalStore<TSnapshot>["subscribe"]>[0]>;
   private snapshot: TSnapshot;

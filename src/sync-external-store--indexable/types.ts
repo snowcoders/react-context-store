@@ -1,33 +1,43 @@
-import { CreateActionParams, statefulStates } from "../shared/index.js";
+import { statefulStates } from "../shared/index.js";
 import {
-  createIndexableErrorSnapshot,
-  createIndexableLoadingSnapshot,
-  createIndexableSuccessSnapshot,
+  indexableCreateLoadingSnapshot,
+  indexableCreateSuccessSnapshot,
+  indexableDeleteSuccessSnapshot,
+  indexableErrorSnapshot,
 } from "./create-snapshot.js";
 
-export type CreateIndexableErrorSnapshot = typeof createIndexableErrorSnapshot;
-export type CreateIndexableLoadingSnapshot = typeof createIndexableLoadingSnapshot;
-export type CreateIndexableSuccessSnapshot = typeof createIndexableSuccessSnapshot;
-
-export type IndexableStoreStructureKey<TStore extends IndexableStore<unknown>> = TStore["data"] extends Array<unknown>
-  ? number
-  : keyof TStore["data"];
-
-export type IndexableStore<TData> = {
-  data: Array<TData> | Record<PropertyKey, TData>;
+export type IndexableArrayStore<TItem> = {
+  data: Array<TItem>;
+  error: null | string;
+  state: keyof typeof statefulStates;
+};
+export type IndexableMapStore<TItem> = {
+  data: Record<PropertyKey, TItem>;
   error: null | string;
   state: keyof typeof statefulStates;
 };
 
-export type CreateIndexableActionParams<
-  TStore extends IndexableStore<unknown>,
-  TParams,
-  TResponse,
-> = CreateActionParams<TParams, TResponse> & {
+export type IndexableStore<TItem = unknown> = IndexableArrayStore<TItem> | IndexableMapStore<TItem>;
+export type IndexableStoreStructureKey<TIndexableStore extends IndexableStore<unknown>> = keyof TIndexableStore["data"];
+export type IndexableStoreValue<TIndexableStore extends IndexableStore<unknown>> =
+  TIndexableStore["data"][keyof TIndexableStore["data"]];
+
+export type CreateIndexableActionParams<TStore extends IndexableStore<unknown>, TParams> = {
   key: IndexableStoreStructureKey<TStore>;
   updateSnapshot?: {
-    error: CreateIndexableErrorSnapshot;
-    loading: CreateIndexableLoadingSnapshot;
-    success: CreateIndexableSuccessSnapshot;
+    error: typeof indexableErrorSnapshot;
+    loading: typeof indexableCreateLoadingSnapshot;
+    success: typeof indexableCreateSuccessSnapshot;
   };
+  action: (params: TParams) => Promise<IndexableStoreValue<TStore>>;
+};
+
+export type DeleteIndexableActionParams<TStore extends IndexableStore<unknown>, TParams> = {
+  key: IndexableStoreStructureKey<TStore>;
+  updateSnapshot?: {
+    error: typeof indexableErrorSnapshot;
+    loading: typeof indexableCreateLoadingSnapshot;
+    success: typeof indexableDeleteSuccessSnapshot;
+  };
+  action: (params: TParams) => Promise<void>;
 };

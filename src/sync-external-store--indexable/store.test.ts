@@ -1,4 +1,4 @@
-import { beforeEach, afterEach, describe, it, jest } from "@jest/globals";
+import { afterEach, beforeEach, describe, it, jest } from "@jest/globals";
 import { IndexableSyncExternalStore } from "./store.js";
 import { IndexableStore } from "./types.js";
 
@@ -35,7 +35,7 @@ describe("IndexableSyncExternalStore", () => {
       }
 
       private async updateDataAction(value: Item) {
-        const action = this.createAction({
+        const action = this.makeUpsertAction({
           action: mockAction,
           key: this.getIndex(value),
         });
@@ -78,8 +78,8 @@ describe("IndexableSyncExternalStore", () => {
     const mockAction = jest.fn(async (value: Item) => value);
     const mockStoreInitialState: IndexableStore<Item> = {
       data: {
-        2112: { id: 2112, value: "hello world" },
         13: { id: 13, value: "hola mundo" },
+        2112: { id: 2112, value: "hello world" },
       },
       error: null,
       state: "unsent",
@@ -95,7 +95,7 @@ describe("IndexableSyncExternalStore", () => {
       }
 
       private async updateDataAction(value: Item) {
-        const action = this.createAction({
+        const action = this.makeUpsertAction({
           action: mockAction,
           key: this.getIndex(value),
         });

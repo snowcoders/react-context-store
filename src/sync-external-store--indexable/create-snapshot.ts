@@ -1,7 +1,7 @@
 import { normalizeError } from "../shared/index.js";
-import type { IndexableStore, IndexableStoreStructureKey } from "./types.js";
+import type { IndexableStore, IndexableStoreStructureKey, IndexableStoreValue } from "./types.js";
 
-export function createIndexableLoadingSnapshot<TStore extends IndexableStore<unknown>>() {
+export function indexableCreateLoadingSnapshot<TStore extends IndexableStore<unknown>>() {
   return (snapshot: TStore): TStore => {
     return {
       ...snapshot,
@@ -11,7 +11,7 @@ export function createIndexableLoadingSnapshot<TStore extends IndexableStore<unk
   };
 }
 
-export function createIndexableErrorSnapshot<TStore extends IndexableStore<unknown>>(error: unknown) {
+export function indexableErrorSnapshot<TStore extends IndexableStore<unknown>>(error: unknown) {
   const errorMessage = normalizeError(error);
   return (snapshot: TStore): TStore => {
     return {
@@ -22,9 +22,9 @@ export function createIndexableErrorSnapshot<TStore extends IndexableStore<unkno
   };
 }
 
-export function createIndexableSuccessSnapshot<TStore extends IndexableStore<unknown>, TData>(
+export function indexableCreateSuccessSnapshot<TStore extends IndexableStore<unknown>>(
   key: IndexableStoreStructureKey<TStore>,
-  data: TData,
+  data: IndexableStoreValue<TStore>,
 ) {
   return (snapshot: TStore): TStore => {
     if (Array.isArray(snapshot.data) && typeof key === "number") {
@@ -43,6 +43,33 @@ export function createIndexableSuccessSnapshot<TStore extends IndexableStore<unk
           ...snapshot.data,
           [key]: data,
         },
+        error: null,
+        state: "success",
+      };
+    }
+  };
+}
+
+export function indexableDeleteSuccessSnapshot<TStore extends IndexableStore<unknown>>(
+  key: IndexableStoreStructureKey<TStore>,
+) {
+  return (snapshot: TStore): TStore => {
+    if (Array.isArray(snapshot.data) && typeof key === "number") {
+      const newData = [...snapshot.data];
+      newData.splice(key, 1);
+      return {
+        ...snapshot,
+        data: newData,
+        error: null,
+        state: "success",
+      };
+    } else {
+      const newData = { ...snapshot.data };
+      // @ts-expect-error: TODO see if we can type this better
+      delete newData[key];
+      return {
+        ...snapshot,
+        data: newData,
         error: null,
         state: "success",
       };
