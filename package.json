@@ -27,7 +27,7 @@
     "sortier": "2.0.2",
     "ts-jest": "29.1.2",
     "tslib": "2.6.2",
-    "typescript": "5.4.4"
+    "typescript": "5.4.5"
   },
   "engines": {
     "node": ">=16.0.0"
